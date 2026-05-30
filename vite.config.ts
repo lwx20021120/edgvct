@@ -107,7 +107,8 @@ function bilibiliProxyMiddleware() {
   }
 }
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/edgvct/' : '/',
   plugins: [react(), {
     name: 'bilibili-proxy-dev',
     configureServer(server) {
@@ -130,4 +131,4 @@ export default defineConfig({
     target: 'es2020',
     sourcemap: false,
   },
-})
+}))
