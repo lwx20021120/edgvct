@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import { AppProvider } from './context/AppContext'
 import { DataProvider } from './context/DataContext'
 import { WallProvider } from './context/WallContext'
@@ -14,7 +14,7 @@ export function App() {
     seedVideos()
   }, [])
   return (
-    <BrowserRouter>
+    <HashRouter>
       <ToastProvider>
         <AppProvider>
           <DataProvider>
@@ -28,6 +28,6 @@ export function App() {
           </DataProvider>
         </AppProvider>
       </ToastProvider>
-    </BrowserRouter>
+    </HashRouter>
   )
 }
