@@ -1,0 +1,87 @@
+{
+  "edgTeam": {
+    "id": "edg",
+    "name": "EDward Gaming",
+    "shortName": "EDG",
+    "logo": "/logos/edg.png",
+    "color": "#E10600"
+  },
+  "edg": [
+    {
+      "id": "zmjjkk",
+      "nickname": "ZmjjKK",
+      "realName": "郑永康",
+      "role": "Duelist",
+      "teamId": "edg",
+      "avatar": "/players/zmjjkk.png",
+      "heroPool": [
+        { "name": "Jett", "icon": "/heroes/jett.png", "role": "Duelist" },
+        { "name": "Neon", "icon": "/heroes/neon.png", "role": "Duelist" },
+        { "name": "Raze", "icon": "/heroes/raze.png", "role": "Duelist" }
+      ],
+      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "isMVP": false
+    },
+    {
+      "id": "smoggy",
+      "nickname": "Smoggy",
+      "realName": "张钊",
+      "role": "Flex",
+      "teamId": "edg",
+      "avatar": "/players/smoggy.png",
+      "heroPool": [
+        { "name": "Omen", "icon": "/heroes/omen.png", "role": "Controller" },
+        { "name": "Killjoy", "icon": "/heroes/killjoy.png", "role": "Sentinel" },
+        { "name": "Viper", "icon": "/heroes/viper.png", "role": "Controller" }
+      ],
+      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "isMVP": false
+    },
+    {
+      "id": "chichoo",
+      "nickname": "CHICHOO",
+      "realName": "万顺治",
+      "role": "Sentinel",
+      "teamId": "edg",
+      "avatar": "/players/chichoo.png",
+      "heroPool": [
+        { "name": "Cypher", "icon": "/heroes/cypher.png", "role": "Sentinel" },
+        { "name": "Killjoy", "icon": "/heroes/killjoy.png", "role": "Sentinel" },
+        { "name": "Chamber", "icon": "/heroes/chamber.png", "role": "Sentinel" }
+      ],
+      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "isMVP": false
+    },
+    {
+      "id": "nobody",
+      "nickname": "nobody",
+      "realName": "王森旭",
+      "role": "Initiator",
+      "teamId": "edg",
+      "avatar": "/players/nobody.png",
+      "heroPool": [
+        { "name": "Sova", "icon": "/heroes/sova.png", "role": "Initiator" },
+        { "name": "Fade", "icon": "/heroes/fade.png", "role": "Initiator" },
+        { "name": "Skye", "icon": "/heroes/skye.png", "role": "Initiator" }
+      ],
+      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "isMVP": false
+    },
+    {
+      "id": "haodong",
+      "nickname": "Haodong",
+      "realName": "郭浩东",
+      "role": "Controller",
+      "teamId": "edg",
+      "avatar": "/players/haodong.png",
+      "heroPool": [
+        { "name": "Astra", "icon": "/heroes/astra.png", "role": "Controller" },
+        { "name": "Omen", "icon": "/heroes/omen.png", "role": "Controller" },
+        { "name": "Brimstone", "icon": "/heroes/brimstone.png", "role": "Controller" }
+      ],
+      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "isMVP": false
+    }
+  ],
+  "opponent": []
+}

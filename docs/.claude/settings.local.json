@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "Bash(npx vite *)",
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(rm -rf node_modules/.vite dist)",
+      "WebSearch",
+      "WebFetch(domain:liquipedia.net)",
+      "WebFetch(domain:en.wikipedia.org)",
+      "Bash(curl -L -o edg-logo.png \"https://en.wikipedia.org/wiki/Special:Redirect/file/Edward_Gaming_logo.png\")",
+      "Bash(curl -L --connect-timeout 10 -o edg-logo.png \"https://upload.wikimedia.org/wikipedia/en/thumb/d/dc/Edward_Gaming_logo.png/512px-Edward_Gaming_logo.png\")",
+      "Bash(curl -L --connect-timeout 10 -o edg-logo.png \"https://imgur.com/edg-logo\")",
+      "Bash(curl -L --connect-timeout 10 -o edg-logo-test.png \"https://cdn.moegirl.org.cn/commons/thumb/8/8e/EDG_logo.png/512px-EDG_logo.png\")",
+      "Bash(curl -L --connect-timeout 10 -o edg-logo.png \"https://raw.githubusercontent.com/ValorantEsports/valorant-esports-assets/main/teams/edg/logo.png\")",
+      "Bash(curl -L --connect-timeout 10 -o edg-logo.png \"https://esports-api.valorant.com/logos/edg.png\")",
+      "Bash(nslookup supabase.co)",
+      "Bash(curl -sI -H \"apikey: sb_publishable_JrxjyUq4OIwo4FmjEcnEew_T6mKSeC7\" \"https://pnimmsjwvxeksyuoqrze.supabase.co/rest/v1/\")",
+      "Bash(curl -sv \"https://pnimmsjwvxeksyuoqrze.supabase.co/rest/v1/\")",
+      "Bash(curl *)",
+      "Bash(npx edgeone *)",
+      "Bash(npm ls *)",
+      "Bash(pip list *)",
+      "Bash(where edgeone *)",
+      "Bash(npm search *)",
+      "Bash(cp -r dist/* .deploy/)",
+      "Bash(cp api/* .deploy/api/)",
+      "WebFetch(domain:edg-vct-london-1cxap9sq.edgeone.cool)",
+      "Bash(cp -r edge-functions .deploy/)",
+      "WebFetch(domain:console.cloud.tencent.com)",
+      "Bash(git --version)",
+      "Bash(gh --version)",
+      "Bash(git config *)",
+      "Bash(git init *)",
+      "Bash(git add *)"
+    ]
+  }
+}

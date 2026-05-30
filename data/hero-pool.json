@@ -1,0 +1,29 @@
+{
+  "heroes": {
+    "Jett": { "name": "Jett", "icon": "/heroes/jett.png", "role": "Duelist" },
+    "Neon": { "name": "Neon", "icon": "/heroes/neon.png", "role": "Duelist" },
+    "Raze": { "name": "Raze", "icon": "/heroes/raze.png", "role": "Duelist" },
+    "Reyna": { "name": "Reyna", "icon": "/heroes/reyna.png", "role": "Duelist" },
+    "Yoru": { "name": "Yoru", "icon": "/heroes/yoru.png", "role": "Duelist" },
+    "Phoenix": { "name": "Phoenix", "icon": "/heroes/phoenix.png", "role": "Duelist" },
+    "Iso": { "name": "Iso", "icon": "/heroes/iso.png", "role": "Duelist" },
+    "Sova": { "name": "Sova", "icon": "/heroes/sova.png", "role": "Initiator" },
+    "Fade": { "name": "Fade", "icon": "/heroes/fade.png", "role": "Initiator" },
+    "Skye": { "name": "Skye", "icon": "/heroes/skye.png", "role": "Initiator" },
+    "Breach": { "name": "Breach", "icon": "/heroes/breach.png", "role": "Initiator" },
+    "KAY/O": { "name": "KAY/O", "icon": "/heroes/kayo.png", "role": "Initiator" },
+    "Gekko": { "name": "Gekko", "icon": "/heroes/gekko.png", "role": "Initiator" },
+    "Omen": { "name": "Omen", "icon": "/heroes/omen.png", "role": "Controller" },
+    "Astra": { "name": "Astra", "icon": "/heroes/astra.png", "role": "Controller" },
+    "Brimstone": { "name": "Brimstone", "icon": "/heroes/brimstone.png", "role": "Controller" },
+    "Viper": { "name": "Viper", "icon": "/heroes/viper.png", "role": "Controller" },
+    "Harbor": { "name": "Harbor", "icon": "/heroes/harbor.png", "role": "Controller" },
+    "Clove": { "name": "Clove", "icon": "/heroes/clove.png", "role": "Controller" },
+    "Killjoy": { "name": "Killjoy", "icon": "/heroes/killjoy.png", "role": "Sentinel" },
+    "Cypher": { "name": "Cypher", "icon": "/heroes/cypher.png", "role": "Sentinel" },
+    "Chamber": { "name": "Chamber", "icon": "/heroes/chamber.png", "role": "Sentinel" },
+    "Sage": { "name": "Sage", "icon": "/heroes/sage.png", "role": "Sentinel" },
+    "Deadlock": { "name": "Deadlock", "icon": "/heroes/deadlock.png", "role": "Sentinel" },
+    "Vyse": { "name": "Vyse", "icon": "/heroes/vyse.png", "role": "Sentinel" }
+  }
+}

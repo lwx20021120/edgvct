@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#0A0A0A"/>
+  <path d="M12 18h40v4H12zM16 26h6v20h-6zM26 26h12v20H26zM42 26h6v20h-6z" fill="#E10600"/>
+  <text x="32" y="58" text-anchor="middle" fill="#F5F5F5" font-size="9" font-family="sans-serif" font-weight="700">EDG</text>
+</svg>

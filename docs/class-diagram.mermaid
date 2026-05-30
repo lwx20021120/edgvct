@@ -1,0 +1,107 @@
+classDiagram
+    class AppContext {
+        +boolean isDarkMode
+        +string currentSection
+        +void setSection(section)
+    }
+
+    class LiveContext {
+        +string activeStreamId
+        +StreamInfo[] streams
+        +void switchStream(id)
+    }
+
+    class DataContext {
+        +Match[] matches
+        +Player[] edgPlayers
+        +Player[] opponentPlayers
+        +DataOverride overrides
+        +Player getPlayer(id)
+        +Match getMatch(id)
+        +void applyOverride(override)
+        +void resetOverrides()
+    }
+
+    class WallContext {
+        +WallMessage[] messages
+        +void addMessage(msg)
+        +void pinMessage(id)
+        +void removeMessage(id)
+        +boolean isSupabaseEnabled
+    }
+
+    class AdminContext {
+        +boolean isAuthenticated
+        +boolean login(password)
+        +void logout()
+    }
+
+    class StreamInfo {
+        +string id
+        +string name
+        +string bilibiliRoomId
+        +string type
+    }
+
+    class Player {
+        +string id
+        +string nickname
+        +PlayerRole role
+        +string teamId
+        +Hero[] heroPool
+        +PlayerStats stats
+        +boolean isMVP
+    }
+
+    class Match {
+        +string id
+        +Team opponentTeam
+        +string startTime
+        +MatchStatus status
+        +Score score
+        +MapResult[] maps
+    }
+
+    class WallMessage {
+        +string id
+        +string nickname
+        +string content
+        +string? imageUrl
+        +number createdAt
+        +boolean isPinned
+    }
+
+    class StreamPlayer {
+        +StreamInfo stream
+        +boolean isActive
+        +boolean isLoaded
+        +void loadIframe()
+        +void destroyIframe()
+    }
+
+    class PlayerCard {
+        +Player player
+        +boolean showMVP
+        +void onMVPToggle()
+    }
+
+    class MatchCard {
+        +Match match
+        +void onScoreUpdate()
+    }
+
+    class MessageForm {
+        +void onSubmit(nickname, content, image?)
+    }
+
+    AppContext --> LiveContext : provides
+    AppContext --> DataContext : provides
+    AppContext --> WallContext : provides
+    LiveContext --> StreamInfo : manages
+    DataContext --> Player : manages
+    DataContext --> Match : manages
+    WallContext --> WallMessage : manages
+    StreamPlayer --> StreamInfo : renders
+    PlayerCard --> Player : renders
+    MatchCard --> Match : renders
+    MessageForm --> WallMessage : creates

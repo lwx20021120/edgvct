@@ -1,0 +1,137 @@
+sequenceDiagram
+    participant Browser
+    participant App as App.tsx
+    participant DP as DataProvider
+    participant LP as LiveProvider
+    participant WP as WallProvider
+    participant Home as HomePage
+    participant LS as localStorage
+
+    Browser->>App: 访问 /
+    App->>App: 初始化 React Router
+    App->>DP: 挂载 DataProvider
+    DP->>DP: import schedule.json
+    DP->>DP: import players.json
+    DP->>LS: 读取 dataOverrides
+    LS-->>DP: 返回覆盖数据（或 null）
+    DP->>DP: 合并 JSON + overrides → 最终数据
+    App->>LP: 挂载 LiveProvider
+    LP->>LP: 初始化 activeStreamId = streams[0].id
+    App->>WP: 挂载 WallProvider
+    WP->>LS: 读取 wallMessages
+    LS-->>WP: 返回留言列表（或 []）
+    WP->>WP: 如需 Supabase → 异步拉取远程留言
+    App->>Home: 渲染 HomePage
+    Home->>Home: Section 1: LiveSection (懒加载)
+    Home->>Home: Section 2: PlayerSection
+    Home->>Home: Section 3: ScheduleSection
+    Home->>Home: Section 4: WallSection
+    Home->>Home: Footer
+
+---
+title: 直播间切换流程
+---
+sequenceDiagram
+    participant User
+    participant StreamTabs
+    participant LiveContext
+    participant StreamPlayer as StreamPlayer (当前)
+    participant StreamPlayerNew as StreamPlayer (新)
+    participant DOM
+
+    User->>StreamTabs: 点击"小辞炒糍粑"标签
+    StreamTabs->>LiveContext: switchStream("xiaoci")
+    LiveContext->>LiveContext: activeStreamId = "xiaoci"
+    LiveContext-->>StreamPlayer: isActive = false
+    StreamPlayer->>DOM: 销毁 iframe (removeChild)
+    StreamPlayer->>StreamPlayer: isLoaded = false
+    LiveContext-->>StreamPlayerNew: isActive = true
+    StreamPlayerNew->>StreamPlayerNew: isLoaded = false (先显示骨架屏)
+    StreamPlayerNew->>DOM: 300ms 后插入 iframe
+    StreamPlayerNew->>StreamPlayerNew: iframe onLoad → isLoaded = true
+    StreamPlayerNew->>User: 显示播放器 + 移除骨架屏
+
+---
+title: 管理面板更新比分流程
+---
+sequenceDiagram
+    participant Admin
+    participant AdminLogin
+    participant AdminDashboard
+    participant ScoreEditor
+    participant DataContext
+    participant LS as localStorage
+
+    Admin->>AdminLogin: 访问 /admin
+    AdminLogin->>AdminLogin: 检查 sessionStorage auth
+    alt 未认证
+        AdminLogin->>Admin: 显示密码输入框
+        Admin->>AdminLogin: 输入密码 "edg2026london"
+        AdminLogin->>AdminLogin: SHA-256 哈希比对
+        alt 密码正确
+            AdminLogin->>LS: sessionStorage.setItem('admin_auth', 'true')
+            AdminLogin->>AdminDashboard: 跳转仪表盘
+        else 密码错误
+            AdminLogin->>Admin: Toast "密码错误"
+        end
+    else 已认证
+        AdminLogin->>AdminDashboard: 直接跳转仪表盘
+    end
+
+    Admin->>AdminDashboard: 选择"编辑比分"
+    AdminDashboard->>ScoreEditor: 渲染比分编辑器
+    Admin->>ScoreEditor: 修改 Map 1 比分为 EDG 13:9
+    Admin->>ScoreEditor: 点击"保存"
+    ScoreEditor->>DataContext: applyOverride({ scoreOverrides: ... })
+    DataContext->>DataContext: 合并 overrides → 新数据
+    DataContext->>LS: localStorage.setItem('dataOverrides', JSON)
+    DataContext-->>ScoreEditor: Toast "比分已更新"
+    Note over DataContext: UI 自动响应新数据重新渲染
+
+---
+title: 应援墙留言提交流程
+---
+sequenceDiagram
+    participant User
+    participant MessageForm
+    participant WallContext
+    participant LS as localStorage
+    participant Supabase
+
+    User->>MessageForm: 输入昵称 + 留言内容
+    User->>MessageForm: 可选：选择图片
+    MessageForm->>MessageForm: 图片 → canvas 压缩 → base64
+    MessageForm->>MessageForm: 校验：昵称非空、内容 ≤500字
+    User->>MessageForm: 点击"发送应援"
+    MessageForm->>WallContext: addMessage({ nickname, content, imageUrl })
+    WallContext->>WallContext: 生成 UUID + 时间戳
+    WallContext->>WallContext: 插入 messages 数组头部
+    WallContext->>LS: 同步到 localStorage
+    alt Supabase 已配置
+        WallContext->>Supabase: INSERT INTO wall_messages
+        Supabase-->>WallContext: 成功 / 失败（静默）
+    end
+    WallContext-->>MessageForm: Toast "应援发送成功！"
+    MessageForm->>MessageForm: 清空表单
+
+---
+title: MVP 点亮流程
+---
+sequenceDiagram
+    participant Admin
+    participant AdminDashboard
+    participant MVPSelector
+    participant DataContext
+    participant PlayerCard
+    participant LS as localStorage
+
+    Admin->>AdminDashboard: 选择"点亮 MVP"
+    AdminDashboard->>MVPSelector: 渲染 MVP 选择器
+    MVPSelector->>DataContext: 获取双方选手列表
+    Admin->>MVPSelector: 选择 "ZmjjKK"
+    Admin->>MVPSelector: 点击"点亮 MVP"
+    MVPSelector->>DataContext: applyOverride({ mvpOverrides: { "zmjjkk": true } })
+    DataContext->>LS: 保存 overrides
+    DataContext-->>PlayerCard: 通知数据变更
+    PlayerCard->>PlayerCard: Framer Motion 播放金色光晕动画
+    PlayerCard->>PlayerCard: isMVP = true, 显示 MVP 徽章
