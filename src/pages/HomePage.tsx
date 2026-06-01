@@ -61,27 +61,81 @@ const CHEER_MESSAGE = {
   closing: 'EDG，去伦敦把冠军再带回来一次。淀粉，永远在。',
 }
 
+/** 右侧应援面板 — 独立组件，页面级侧边栏 */
+function CheerSidebar() {
+  return (
+    <div
+      className="overflow-y-auto pr-1 max-h-[calc(100vh-5rem)] sticky top-20
+        [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent
+        [&::-webkit-scrollbar-thumb]:bg-primary/20 [&::-webkit-scrollbar-thumb]:rounded-full"
+    >
+      <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-md p-5 md:p-6">
+        <h3 className="text-lg font-bold text-primary mb-1 tracking-wide">
+          {CHEER_MESSAGE.title}
+        </h3>
+        <p className="text-caption text-text-tertiary mb-5 leading-relaxed italic">
+          {CHEER_MESSAGE.intro}
+        </p>
+
+        <div className="mb-5 h-px bg-gradient-to-r from-primary/40 via-white/[0.08] to-transparent" />
+
+        <div className="space-y-5">
+          {CHEER_MESSAGE.players.map((player, i) => (
+            <motion.div
+              key={player.name}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: i * 0.1 }}
+              viewport={{ once: true }}
+              className="pl-4 border-l-2 border-primary/25 hover:border-primary/50 transition-colors duration-300"
+            >
+              <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                <span className="text-body-sm font-bold text-text-primary">{player.name}</span>
+                <span className="text-[11px] text-primary/60 bg-primary/[0.06] px-1.5 py-0.5 rounded font-medium">
+                  {player.tagline}
+                </span>
+              </div>
+              <p className="text-caption text-text-tertiary leading-relaxed">{player.message}</p>
+            </motion.div>
+          ))}
+        </div>
+
+        <div className="my-5 h-px bg-gradient-to-r from-primary/40 via-white/[0.08] to-transparent" />
+
+        <p className="text-caption text-text-secondary leading-relaxed">
+          {CHEER_MESSAGE.teamMessage}
+        </p>
+
+        <p className="mt-5 text-body-sm font-bold text-primary text-center tracking-wide">
+          {CHEER_MESSAGE.closing}
+        </p>
+      </div>
+    </div>
+  )
+}
+
 export function HomePage() {
   return (
     <div className="min-h-[100dvh] bg-bg-primary">
       <Header />
       <main className="pt-14 md:pt-16">
         <Container>
-          {/* Hero */}
-          <Section id="hero" title="" className="pt-6 md:pt-10">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* ===== 桌面端左右分栏 (flex), 移动端居中 ===== */}
-              <div className="flex flex-col lg:flex-row lg:gap-8 py-8 md:py-12 lg:py-16">
+          {/* ===== 页面级左右分栏：左侧全部内容 + 右侧应援边栏 ===== */}
+          <div className="lg:flex lg:flex-row lg:gap-6 xl:gap-8">
 
-                {/* ========== 左侧 Hero 主内容 ========== */}
-                <div className="relative flex-1 text-center lg:text-left overflow-hidden lg:max-w-[58%] lg:min-w-0">
+            {/* ========== 左侧：全部页面内容 ========== */}
+            <div className="lg:flex-1 lg:min-w-0">
 
+              {/* Hero */}
+              <Section id="hero" title="" className="pt-6 md:pt-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="relative text-center py-8 md:py-12 lg:py-16"
+                >
                   {/* 背景光晕 */}
-                  <div className="absolute top-0 left-1/2 lg:left-1/3 -translate-x-1/2 w-[400px] h-[250px] md:w-[500px] md:h-[320px]
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[400px] h-[250px] md:w-[500px] md:h-[320px]
                     bg-[radial-gradient(ellipse,_rgba(225,6,0,0.10)_0%,_rgba(225,6,0,0.04)_40%,_transparent_70%)] pointer-events-none z-0" />
                   <div className="absolute top-1/2 left-1/3 w-[200px] h-[150px] md:w-[300px] md:h-[200px]
                     bg-[radial-gradient(ellipse,_rgba(99,102,241,0.05)_0%,_transparent_60%)] pointer-events-none z-0" />
@@ -92,32 +146,26 @@ export function HomePage() {
                     viewBox="0 0 700 500"
                     preserveAspectRatio="xMidYMid slice"
                   >
-                    <line x1="15" y1="60" x2="15" y2="200"
-                      stroke="rgba(225,6,0,0.08)" strokeWidth="1" strokeDasharray="3 6" />
+                    <line x1="15" y1="60" x2="15" y2="200" stroke="rgba(225,6,0,0.08)" strokeWidth="1" strokeDasharray="3 6" />
                     <circle cx="15" cy="60" r="2" fill="rgba(225,6,0,0.2)" />
                     <circle cx="15" cy="200" r="2" fill="rgba(225,6,0,0.2)" />
-                    <line x1="680" y1="100" x2="680" y2="260"
-                      stroke="rgba(212,168,83,0.08)" strokeWidth="1" strokeDasharray="3 6" />
+                    <line x1="680" y1="100" x2="680" y2="260" stroke="rgba(212,168,83,0.08)" strokeWidth="1" strokeDasharray="3 6" />
                     <circle cx="680" cy="100" r="2" fill="rgba(212,168,83,0.2)" />
                     <circle cx="680" cy="260" r="2" fill="rgba(212,168,83,0.2)" />
-                    <line x1="15" y1="440" x2="690" y2="440"
-                      stroke="rgba(99,102,241,0.06)" strokeWidth="1" strokeDasharray="3 6" />
+                    <line x1="15" y1="440" x2="690" y2="440" stroke="rgba(99,102,241,0.06)" strokeWidth="1" strokeDasharray="3 6" />
                     <circle cx="350" cy="440" r="2" fill="rgba(99,102,241,0.15)" />
                   </svg>
 
-                  {/* 浮动选手标签 - 左上方：球球 (保持在左栏内) */}
+                  {/* 浮动选手标签 */}
                   <div className="absolute top-0 left-0 hidden lg:block z-10">
                     <DataBadge name="CHICHOO · 球球" tagline="最高的丘陵" variant="gold" delay={0.1} />
                   </div>
-                  {/* 浮动选手标签 - 左中：康康 */}
                   <div className="absolute top-[130px] left-0 hidden lg:block z-10">
                     <DataBadge name="ZmjjKK · 康康" tagline="VCT CN 最强一突" variant="primary" delay={0.3} />
                   </div>
-                  {/* 浮动选手标签 - 栏内右上：张钊 */}
                   <div className="absolute top-2 right-2 hidden lg:block z-10">
                     <DataBadge name="Smoggy · 张钊" tagline="御驾亲征" variant="green" delay={0.5} />
                   </div>
-                  {/* 浮动选手标签 - 栏内右下：王森旭 */}
                   <div className="absolute top-[130px] right-2 hidden lg:block z-10">
                     <DataBadge name="nobody · 王森旭" tagline="电工钳最佳代言人" variant="gold" delay={0.7} />
                   </div>
@@ -151,12 +199,12 @@ export function HomePage() {
                   </h1>
 
                   {/* 副标题 */}
-                  <p className="relative mt-4 text-[clamp(15px,2vw,18px)] text-text-secondary max-w-lg lg:max-w-none leading-relaxed z-10">
+                  <p className="relative mt-4 text-[clamp(15px,2vw,18px)] text-text-secondary max-w-lg mx-auto leading-relaxed z-10">
                     EDward Gaming 出征伦敦大师赛 · 为 CN 荣耀而战
                   </p>
 
                   {/* 信息条 */}
-                  <div className="relative mt-6 flex items-center justify-center lg:justify-start gap-4 md:gap-6 text-caption md:text-body-sm text-text-tertiary z-10">
+                  <div className="relative mt-6 flex items-center justify-center gap-4 md:gap-6 text-caption md:text-body-sm text-text-tertiary z-10">
                     <span className="flex items-center gap-1.5">
                       <span className="inline-block h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
                       2026年6月12日 · 伦敦
@@ -168,7 +216,7 @@ export function HomePage() {
                   </div>
 
                   {/* 双 CTA */}
-                  <div className="relative mt-8 flex items-center justify-center lg:justify-start gap-3 flex-wrap z-10">
+                  <div className="relative mt-8 flex items-center justify-center gap-3 flex-wrap z-10">
                     <button
                       onClick={() => document.getElementById('video')?.scrollIntoView({ behavior: 'smooth' })}
                       className="rounded-full bg-primary hover:bg-primary-hover px-6 py-2.5 text-body-sm font-semibold
@@ -188,7 +236,7 @@ export function HomePage() {
                   </div>
 
                   {/* 快捷导航 */}
-                  <div className="relative mt-6 flex items-center justify-center lg:justify-start gap-2 flex-wrap z-10">
+                  <div className="relative mt-6 flex items-center justify-center gap-2 flex-wrap z-10">
                     {['视频','选手','赛程','应援'].map((label, i) => (
                       <button
                         key={label}
@@ -202,10 +250,10 @@ export function HomePage() {
                   </div>
 
                   {/* 合作伙伴 */}
-                  <div className="relative mt-10 md:mt-12 flex items-center justify-center lg:justify-start gap-6 md:gap-8 opacity-25 hover:opacity-40 transition-opacity duration-500 z-10">
+                  <div className="relative mt-10 md:mt-12 flex items-center justify-center gap-6 md:gap-8 opacity-25 hover:opacity-40 transition-opacity duration-500 z-10">
                     <span className="text-caption text-text-tertiary tracking-widest uppercase">Partners</span>
                     <div className="hidden sm:block h-4 w-px bg-white/[0.15]" />
-                    <div className="flex items-center gap-5 md:gap-8 flex-wrap justify-center lg:justify-start">
+                    <div className="flex items-center gap-5 md:gap-8 flex-wrap justify-center">
                       {SPONSORS.map((brand) => (
                         <span key={brand.name} className="text-xs md:text-sm font-bold text-text-tertiary uppercase tracking-wider hover:text-text-secondary transition-colors">
                           {brand.name}
@@ -213,113 +261,55 @@ export function HomePage() {
                       ))}
                     </div>
                   </div>
-                </div>
-
-                {/* ========== 右侧：应援寄语面板 — 从上往下填满 ========== */}
-                <div className="hidden lg:block lg:w-[42%] lg:min-w-[320px] lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
-                  <div
-                    className="overflow-y-auto pr-1 lg:max-h-[calc(100vh-6rem)]
-                      [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent
-                      [&::-webkit-scrollbar-thumb]:bg-primary/20 [&::-webkit-scrollbar-thumb]:rounded-full"
-                  >
-                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] backdrop-blur-md p-5 md:p-6">
-                      <h3 className="text-lg font-bold text-primary mb-1 tracking-wide">
-                        {CHEER_MESSAGE.title}
-                      </h3>
-                      <p className="text-caption text-text-tertiary mb-5 leading-relaxed italic">
-                        {CHEER_MESSAGE.intro}
-                      </p>
-
-                      <div className="mb-5 h-px bg-gradient-to-r from-primary/40 via-white/[0.08] to-transparent" />
-
-                      <div className="space-y-5">
-                        {CHEER_MESSAGE.players.map((player, i) => (
-                          <motion.div
-                            key={player.name}
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            transition={{ duration: 0.4, delay: i * 0.1 }}
-                            viewport={{ once: true }}
-                            className="pl-4 border-l-2 border-primary/25 hover:border-primary/50 transition-colors duration-300"
-                          >
-                            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                              <span className="text-body-sm font-bold text-text-primary">{player.name}</span>
-                              <span className="text-[11px] text-primary/60 bg-primary/[0.06] px-1.5 py-0.5 rounded font-medium">
-                                {player.tagline}
-                              </span>
-                            </div>
-                            <p className="text-caption text-text-tertiary leading-relaxed">{player.message}</p>
-                          </motion.div>
-                        ))}
-                      </div>
-
-                      <div className="my-5 h-px bg-gradient-to-r from-primary/40 via-white/[0.08] to-transparent" />
-
-                      <p className="text-caption text-text-secondary leading-relaxed">
-                        {CHEER_MESSAGE.teamMessage}
-                      </p>
-
-                      <p className="mt-5 text-body-sm font-bold text-primary text-center tracking-wide">
-                        {CHEER_MESSAGE.closing}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </motion.div>
-          </Section>
-
-          {/* Video Section */}
-          <ErrorBoundary>
-            <motion.div {...fadeInUp}>
-              <Section id="video" title="应援视频轮播" subtitle="B站视频 + 粉丝自制，循环播放为EDG加油">
-                <VideoSection />
+                </motion.div>
               </Section>
-            </motion.div>
-            <motion.div {...fadeInUp}>
-              <VideoUpload />
-            </motion.div>
-          </ErrorBoundary>
 
-          {/* Players Section */}
-          <ErrorBoundary>
-            <motion.div {...fadeInUp}>
-              <Section
-                id="players"
-                title="赛中数据"
-                subtitle="选手实时数据与英雄池，MVP 标记高亮"
-              >
-                <PlayerSection />
-              </Section>
-            </motion.div>
-          </ErrorBoundary>
+              {/* Video Section */}
+              <ErrorBoundary>
+                <motion.div {...fadeInUp}>
+                  <Section id="video" title="应援视频轮播" subtitle="B站视频 + 粉丝自制，循环播放为EDG加油">
+                    <VideoSection />
+                  </Section>
+                </motion.div>
+                <motion.div {...fadeInUp}>
+                  <VideoUpload />
+                </motion.div>
+              </ErrorBoundary>
 
-          {/* Schedule Section */}
-          <ErrorBoundary>
-            <motion.div {...fadeInUp}>
-              <Section
-                id="schedule"
-                title="赛程信息"
-                subtitle="EDG 比赛时间与地图详情，倒计时提醒"
-              >
-                <ScheduleSection />
-              </Section>
-            </motion.div>
-          </ErrorBoundary>
+              {/* Players Section */}
+              <ErrorBoundary>
+                <motion.div {...fadeInUp}>
+                  <Section id="players" title="赛中数据" subtitle="选手实时数据与英雄池，MVP 标记高亮">
+                    <PlayerSection />
+                  </Section>
+                </motion.div>
+              </ErrorBoundary>
 
-          {/* Wall Section */}
-          <ErrorBoundary>
-            <motion.div {...fadeInUp}>
-              <Section
-                id="wall"
-                title="应援墙"
-                subtitle="写下你的加油，让 EDG 选手们看到！"
-              >
-                <WallSection />
-              </Section>
-            </motion.div>
-          </ErrorBoundary>
+              {/* Schedule Section */}
+              <ErrorBoundary>
+                <motion.div {...fadeInUp}>
+                  <Section id="schedule" title="赛程信息" subtitle="EDG 比赛时间与地图详情，倒计时提醒">
+                    <ScheduleSection />
+                  </Section>
+                </motion.div>
+              </ErrorBoundary>
+
+              {/* Wall Section */}
+              <ErrorBoundary>
+                <motion.div {...fadeInUp}>
+                  <Section id="wall" title="应援墙" subtitle="写下你的加油，让 EDG 选手们看到！">
+                    <WallSection />
+                  </Section>
+                </motion.div>
+              </ErrorBoundary>
+            </div>
+
+            {/* ========== 右侧：应援寄语边栏（仅桌面端，页面级） ========== */}
+            <div className="hidden lg:block lg:w-[360px] xl:w-[400px] lg:flex-shrink-0 lg:pt-20">
+              <CheerSidebar />
+            </div>
+
+          </div>
         </Container>
       </main>
       <Footer />
