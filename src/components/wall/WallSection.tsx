@@ -10,11 +10,11 @@ export function WallSection() {
   )
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-      <div className="lg:col-span-1">
+    <div className="flex flex-col lg:flex-row justify-center gap-4 md:gap-6">
+      <div className="w-full lg:w-[340px] lg:flex-shrink-0">
         <MessageForm />
       </div>
-      <div className="lg:col-span-2">
+      <div className="w-full lg:flex-1 lg:max-w-[800px]">
         <MessageList
           messages={messages}
           hasMore={hasMore}

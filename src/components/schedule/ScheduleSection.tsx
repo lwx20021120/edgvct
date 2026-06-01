@@ -13,9 +13,11 @@ export function ScheduleSection() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+    <div className="flex flex-wrap justify-center gap-4 md:gap-6">
       {matches.map((match) => (
-        <MatchCard key={match.id} match={match} />
+        <div key={match.id} className="w-full lg:w-[calc(50%-0.75rem)] min-w-[300px] max-w-[600px]">
+          <MatchCard match={match} />
+        </div>
       ))}
     </div>
   )
