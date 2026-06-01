@@ -19,7 +19,7 @@
         { "name": "Neon", "icon": "/heroes/neon.png", "role": "Duelist" },
         { "name": "Raze", "icon": "/heroes/raze.png", "role": "Duelist" }
       ],
-      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "stats": { "acs": 252, "kd": 1.27, "kills": 260, "deaths": 205, "assists": 62, "hsPercent": 23, "fkpr": 0.97 },
       "isMVP": false
     },
     {
@@ -34,8 +34,8 @@
         { "name": "Killjoy", "icon": "/heroes/killjoy.png", "role": "Sentinel" },
         { "name": "Viper", "icon": "/heroes/viper.png", "role": "Controller" }
       ],
-      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
-      "isMVP": false
+      "stats": { "acs": 230, "kd": 1.20, "kills": 218, "deaths": 182, "assists": 74, "hsPercent": 25, "fkpr": 0.82 },
+      "isMVP": true
     },
     {
       "id": "chichoo",
@@ -49,7 +49,7 @@
         { "name": "Killjoy", "icon": "/heroes/killjoy.png", "role": "Sentinel" },
         { "name": "Chamber", "icon": "/heroes/chamber.png", "role": "Sentinel" }
       ],
-      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "stats": { "acs": 195, "kd": 1.10, "kills": 160, "deaths": 145, "assists": 55, "hsPercent": 20, "fkpr": 0.70 },
       "isMVP": false
     },
     {
@@ -64,22 +64,22 @@
         { "name": "Fade", "icon": "/heroes/fade.png", "role": "Initiator" },
         { "name": "Skye", "icon": "/heroes/skye.png", "role": "Initiator" }
       ],
-      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "stats": { "acs": 190, "kd": 1.06, "kills": 152, "deaths": 143, "assists": 85, "hsPercent": 27, "fkpr": 0.65 },
       "isMVP": false
     },
     {
-      "id": "haodong",
-      "nickname": "Haodong",
-      "realName": "郭浩东",
+      "id": "jieni7",
+      "nickname": "Jieni7",
+      "realName": "杰尼龟",
       "role": "Controller",
       "teamId": "edg",
-      "avatar": "/players/haodong.png",
+      "avatar": "/players/jieni7.png",
       "heroPool": [
         { "name": "Astra", "icon": "/heroes/astra.png", "role": "Controller" },
         { "name": "Omen", "icon": "/heroes/omen.png", "role": "Controller" },
         { "name": "Brimstone", "icon": "/heroes/brimstone.png", "role": "Controller" }
       ],
-      "stats": { "acs": 0, "kd": 0, "kills": 0, "deaths": 0, "assists": 0, "hsPercent": 0, "fkpr": 0 },
+      "stats": { "acs": 184, "kd": 0.95, "kills": 142, "deaths": 149, "assists": 98, "hsPercent": 24, "fkpr": 0.62 },
       "isMVP": false
     }
   ],
