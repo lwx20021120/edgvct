@@ -120,11 +120,11 @@ export function HomePage() {
       <Header />
       <main className="pt-14 md:pt-16">
         <Container>
-          {/* ===== 页面级左右分栏：左侧全部内容 + 右侧应援边栏 ===== */}
-          <div className="lg:flex lg:flex-row lg:gap-6 xl:gap-8">
+          {/* ===== 页面级左右分栏：窄屏堆叠，md+并排 ===== */}
+          <div className="flex flex-col md:flex-row md:gap-4 lg:gap-6 xl:gap-8">
 
             {/* ========== 左侧：全部页面内容 ========== */}
-            <div className="lg:flex-1 lg:min-w-0">
+            <div className="md:flex-1 md:min-w-0">
 
               {/* Hero */}
               <Section id="hero" title="" className="pt-6 md:pt-10">
@@ -304,8 +304,8 @@ export function HomePage() {
               </ErrorBoundary>
             </div>
 
-            {/* ========== 右侧：应援寄语边栏（仅桌面端，页面级） ========== */}
-            <div className="hidden lg:block lg:w-[360px] xl:w-[400px] lg:flex-shrink-0 lg:pt-20">
+            {/* ========== 右侧：应援寄语边栏（md+显示） ========== */}
+            <div className="hidden md:block md:w-[300px] lg:w-[360px] xl:w-[400px] md:flex-shrink-0 md:pt-20">
               <CheerSidebar />
             </div>
 
