@@ -74,11 +74,11 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
             >
-              {/* ===== 桌面端左右分栏 ===== */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 lg:gap-8 items-start py-8 md:py-12 lg:py-16">
+              {/* ===== 桌面端左右分栏 (flex), 移动端居中 ===== */}
+              <div className="flex flex-col lg:flex-row lg:gap-8 py-8 md:py-12 lg:py-16">
 
-                {/* ========== 左侧 Hero 主内容 (lg: col 1-7) ========== */}
-                <div className="relative lg:col-span-7 text-center lg:text-left overflow-hidden">
+                {/* ========== 左侧 Hero 主内容 ========== */}
+                <div className="relative flex-1 text-center lg:text-left overflow-hidden lg:max-w-[58%] lg:min-w-0">
 
                   {/* 背景光晕 */}
                   <div className="absolute top-0 left-1/2 lg:left-1/3 -translate-x-1/2 w-[400px] h-[250px] md:w-[500px] md:h-[320px]
@@ -215,10 +215,10 @@ export function HomePage() {
                   </div>
                 </div>
 
-                {/* ========== 右侧：应援寄语面板 (lg: col 8-12) ========== */}
-                <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-20">
+                {/* ========== 右侧：应援寄语面板 — 从上往下填满 ========== */}
+                <div className="hidden lg:block lg:w-[42%] lg:min-w-[320px] lg:flex-shrink-0 lg:sticky lg:top-20 lg:self-start">
                   <div
-                    className="max-h-[520px] overflow-y-auto pr-1
+                    className="overflow-y-auto pr-1 lg:max-h-[calc(100vh-6rem)]
                       [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent
                       [&::-webkit-scrollbar-thumb]:bg-primary/20 [&::-webkit-scrollbar-thumb]:rounded-full"
                   >

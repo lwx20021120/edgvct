@@ -25,10 +25,15 @@ export const presetVideos = [
 ]
 
 export async function seedVideos() {
+  // GitHub Pages 静态托管下跳过 API 调用，使用本地预设数据
+  if (import.meta.env.PROD && window.location.hostname.includes('github.io')) {
+    console.log('seedVideos: static hosting detected, using preset videos')
+    return
+  }
   try {
     const data = await apiGet('/rest/v1/video_playlist?select=id&limit=1')
     if (typeof data === 'string') {
-      console.error('seedVideos: API returned text:', data)
+      console.warn('seedVideos: API returned text, using preset videos')
       return
     }
     if (Array.isArray(data) && data.length > 0) {
@@ -40,6 +45,6 @@ export async function seedVideos() {
       console.log('seedVideos: inserted', v.bvid)
     }
   } catch (e) {
-    console.error('seedVideos exception:', e)
+    console.warn('seedVideos: API unavailable (expected on static hosting), using preset videos')
   }
 }
