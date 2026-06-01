@@ -33,7 +33,7 @@ export function MatchCard({ match }: MatchCardProps) {
 
   return (
     <div
-      className="rounded-xl bg-[#111] overflow-hidden shadow-lg transition-all duration-500"
+      className="rounded-xl bg-[#111]/80 backdrop-blur-sm border border-white/[0.06] overflow-hidden shadow-lg transition-all duration-500"
       style={isLive ? { animation: 'pulse-glow 2s infinite' } : undefined}
     >
       {/* Header */}

@@ -65,7 +65,7 @@ export function MessageForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="rounded-lg bg-[#111] p-4">
+    <form onSubmit={handleSubmit} className="rounded-lg bg-[#111]/80 backdrop-blur-sm border border-white/[0.05] p-4">
       <div className="flex gap-3">
         <input
           type="text"

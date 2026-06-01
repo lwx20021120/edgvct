@@ -9,7 +9,7 @@ interface PlayerCardGridProps {
 export function PlayerCardGrid({ players, isEdg }: PlayerCardGridProps) {
   if (players.length === 0) {
     return (
-      <div className="flex items-center justify-center rounded-2xl bg-[#111] py-8 w-full max-w-5xl mx-auto">
+      <div className="flex items-center justify-center rounded-2xl bg-[#111]/80 backdrop-blur-sm border border-white/[0.04] py-8 w-full max-w-5xl mx-auto">
         <p className="text-text-tertiary text-body-sm">选手数据待更新</p>
       </div>
     )

@@ -22,12 +22,13 @@ export function PlayerCard({ player, isEdg }: PlayerCardProps) {
 
   return (
     <motion.div
-      className={`relative rounded-xl p-3 md:p-4 transition-all duration-300 overflow-hidden ${
+      className={`relative rounded-xl p-3 md:p-4 transition-all duration-300 overflow-hidden
+        backdrop-blur-sm border ${
         player.isMVP
-          ? 'bg-gradient-to-br from-[#1a0f00] to-[#111] shadow-[0_0_30px_rgba(212,168,83,0.1)]'
+          ? 'bg-gradient-to-br from-[#1a0f00]/90 to-[#111]/90 border-gold/20 shadow-[0_0_30px_rgba(212,168,83,0.1)]'
           : isEdg
-            ? 'bg-gradient-to-br from-[#1a0808] to-[#111]'
-            : 'bg-[#111]'
+            ? 'bg-gradient-to-br from-[#1a0808]/85 to-[#111]/85 border-primary/[0.08]'
+            : 'bg-[#111]/80 border-white/[0.05]'
       }`}
       whileHover={{ scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}

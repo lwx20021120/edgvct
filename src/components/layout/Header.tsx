@@ -37,7 +37,7 @@ export function Header() {
   }, [setSection])
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-bg-primary/80 backdrop-blur-md">
+    <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-bg-primary/85 backdrop-blur-lg">
       <Container className="flex h-14 items-center justify-between md:h-16">
         {/* Logo */}
         <a

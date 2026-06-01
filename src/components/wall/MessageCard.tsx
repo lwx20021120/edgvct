@@ -26,10 +26,10 @@ export function MessageCard({ message, isAdmin }: MessageCardProps) {
 
   return (
     <div
-      className={`relative rounded-lg bg-[#111] p-4 transition-all duration-200 ${
+      className={`relative rounded-lg bg-[#111]/80 backdrop-blur-sm p-4 transition-all duration-200 ${
         message.isPinned
-          ? 'border-l-[3px] border-l-gold bg-gradient-to-r from-gold/5 to-transparent'
-          : 'border-l-[3px] border-l-transparent hover:border-l-primary/50'
+          ? 'border-l-[3px] border-l-gold bg-gradient-to-r from-gold/[0.08] to-transparent border border-gold/10'
+          : 'border border-white/[0.04] border-l-[3px] border-l-transparent hover:border-l-primary/50'
       }`}
     >
       {/* Header */}

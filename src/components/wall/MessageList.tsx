@@ -23,7 +23,7 @@ export function MessageList({ messages, hasMore, onLoadMore, isAdmin }: MessageL
 
   if (messages.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-white/[0.08] bg-[#111] py-12">
+      <div className="flex flex-col items-center justify-center rounded-lg border border-dashed border-white/[0.08] bg-[#111]/80 backdrop-blur-sm py-12">
         <p className="text-text-tertiary text-body">还没有应援留言</p>
         <p className="mt-1 text-caption text-text-tertiary">成为第一个为 EDG 加油的淀粉吧！</p>
       </div>
