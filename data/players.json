@@ -26,7 +26,7 @@
       "id": "smoggy",
       "nickname": "Smoggy",
       "realName": "张钊",
-      "role": "Flex",
+      "role": "Duelist",
       "teamId": "edg",
       "avatar": "/players/smoggy.png",
       "heroPool": [
@@ -71,7 +71,7 @@
       "id": "jieni7",
       "nickname": "Jieni7",
       "realName": "杰尼龟",
-      "role": "Controller",
+      "role": "Flex",
       "teamId": "edg",
       "avatar": "/players/jieni7.png",
       "heroPool": [

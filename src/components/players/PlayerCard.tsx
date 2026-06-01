@@ -34,15 +34,14 @@ export function PlayerCard({ player, isEdg }: PlayerCardProps) {
       whileHover={{ scale: 1.02 }}
       transition={{ type: 'spring', stiffness: 300, damping: 20 }}
     >
-      {/* 选手照片背景层 — z-0，极低不透明度 */}
+      {/* 选手照片背景层 — z-0，半透明水印 */}
       {bgPhotoUrl && (
         <div
-          className="absolute inset-0 z-0 rounded-xl opacity-10 group-hover:opacity-[0.18] transition-opacity duration-500"
+          className="absolute inset-0 z-0 rounded-xl opacity-20 group-hover:opacity-30 transition-opacity duration-500"
           style={{
             backgroundImage: `url(${bgPhotoUrl})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center 20%',
-            filter: 'blur(1px) saturate(0.8)',
+            backgroundPosition: 'center 15%',
           }}
         />
       )}
@@ -51,10 +50,10 @@ export function PlayerCard({ player, isEdg }: PlayerCardProps) {
       <div
         className={`absolute inset-0 z-[1] rounded-xl ${
           player.isMVP
-            ? 'bg-gradient-to-br from-[#1a0f00]/92 to-[#0d0d0d]/94'
+            ? 'bg-gradient-to-br from-[#1a0f00]/90 to-[#0d0d0d]/92'
             : isEdg
-              ? 'bg-gradient-to-br from-[#1a0808]/88 to-[#0d0d0d]/90'
-              : 'bg-gradient-to-br from-[#111]/90 to-[#0d0d0d]/92'
+              ? 'bg-gradient-to-br from-[#1a0808]/85 to-[#0d0d0d]/88'
+              : 'bg-gradient-to-br from-[#111]/88 to-[#0d0d0d]/90'
         }`}
       />
 
