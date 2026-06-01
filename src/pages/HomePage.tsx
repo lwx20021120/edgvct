@@ -47,50 +47,51 @@ export function HomePage() {
               <div className="absolute top-1/2 left-1/3 w-[200px] h-[150px] md:w-[300px] md:h-[200px]
                 bg-[radial-gradient(ellipse,_rgba(99,102,241,0.05)_0%,_transparent_60%)] pointer-events-none" />
 
-              {/* 节点连接线 SVG - 纯装饰 */}
+              {/* 节点连接线 SVG - 纯装饰，环绕 Hero */}
               <svg
                 className="absolute inset-0 pointer-events-none hidden lg:block"
                 viewBox="0 0 1200 500"
                 preserveAspectRatio="xMidYMid slice"
               >
-                {/* 从顶部数据标签到右侧底部 */}
-                <line x1="880" y1="80" x2="1020" y2="380"
-                  stroke="rgba(225,6,0,0.10)" strokeWidth="1" strokeDasharray="4 6"
-                  style={{ animation: 'dash-flow 8s linear infinite' }} />
-                <circle cx="880" cy="80" r="2.5" fill="rgba(225,6,0,0.25)"
-                  style={{ animation: 'node-pulse 3s ease-in-out infinite' }} />
-                <circle cx="1020" cy="380" r="2.5" fill="rgba(225,6,0,0.25)"
-                  style={{ animation: 'node-pulse 3s ease-in-out 1.5s infinite' }} />
-                {/* 从左侧数据标签到右下 */}
-                <line x1="150" y1="100" x2="180" y2="350"
-                  stroke="rgba(99,102,241,0.08)" strokeWidth="1" strokeDasharray="4 6"
-                  style={{ animation: 'dash-flow 8s linear 2s infinite' }} />
-                <circle cx="150" cy="100" r="2.5" fill="rgba(99,102,241,0.2)"
-                  style={{ animation: 'node-pulse 3s ease-in-out 0.5s infinite' }} />
-                <circle cx="180" cy="350" r="2.5" fill="rgba(99,102,241,0.2)"
-                  style={{ animation: 'node-pulse 3s ease-in-out 2s infinite' }} />
-                {/* 交叉连线 */}
-                <line x1="150" y1="100" x2="880" y2="80"
-                  stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" strokeDasharray="2 8" />
-                <line x1="180" y1="350" x2="1020" y2="380"
-                  stroke="rgba(255,255,255,0.04)" strokeWidth="0.5" strokeDasharray="2 8" />
+                {/* 左侧连线团 */}
+                <line x1="30" y1="60" x2="30" y2="220"
+                  stroke="rgba(225,6,0,0.08)" strokeWidth="1" strokeDasharray="3 6" />
+                <circle cx="30" cy="60" r="2" fill="rgba(225,6,0,0.2)" />
+                <circle cx="30" cy="220" r="2" fill="rgba(225,6,0,0.2)" />
+                {/* 右侧连线团 */}
+                <line x1="1170" y1="80" x2="1170" y2="240"
+                  stroke="rgba(212,168,83,0.08)" strokeWidth="1" strokeDasharray="3 6" />
+                <circle cx="1170" cy="80" r="2" fill="rgba(212,168,83,0.2)" />
+                <circle cx="1170" cy="240" r="2" fill="rgba(212,168,83,0.2)" />
+                {/* 底部连线 */}
+                <line x1="40" y1="420" x2="1160" y2="420"
+                  stroke="rgba(99,102,241,0.06)" strokeWidth="1" strokeDasharray="3 6" />
+                <circle cx="600" cy="420" r="2" fill="rgba(99,102,241,0.15)" />
               </svg>
 
-              {/* 浮动数据标签 - 左上 */}
-              <div className="absolute top-0 left-4 md:left-12 hidden lg:block">
-                <DataBadge label="康康 · ACS" value="285.3" variant="green" delay={0.2} />
+              {/* 浮动选手标签 - 左上：球球 */}
+              <div className="absolute top-0 left-0 hidden lg:block" style={{ marginLeft: '-8px' }}>
+                <DataBadge name="CHICHOO · 球球" tagline="最高的丘陵" variant="gold" delay={0.1} />
               </div>
-              {/* 浮动数据标签 - 右上 */}
-              <div className="absolute top-4 right-4 md:right-12 hidden lg:block">
-                <DataBadge label="Smoggy · K/D" value="1.42" variant="gold" delay={0.4} />
+              {/* 浮动选手标签 - 左中：康康 */}
+              <div className="absolute top-[140px] left-0 hidden lg:block" style={{ marginLeft: '-4px' }}>
+                <DataBadge name="ZmjjKK · 康康" tagline="VCT CN 最强一突" variant="primary" delay={0.3} />
               </div>
-              {/* 浮动数据标签 - 左下 */}
-              <div className="absolute bottom-24 md:bottom-20 left-8 md:left-24 hidden lg:block">
-                <DataBadge label="CHICHOO · HS%" value="32.5" variant="green" delay={0.6} />
+              {/* 浮动选手标签 - 左上偏右：张钊 */}
+              <div className="absolute top-5 right-0 hidden lg:block" style={{ marginRight: '-4px' }}>
+                <DataBadge name="Smoggy · 张钊" tagline="御驾亲征" variant="green" delay={0.5} />
               </div>
-              {/* 浮动数据标签 - 右下 */}
-              <div className="absolute bottom-12 md:bottom-8 right-12 md:right-28 hidden lg:block">
-                <DataBadge label="nobody · KPR" value="0.89" variant="primary" delay={0.8} />
+              {/* 浮动选手标签 - 右中：杰尼龟 */}
+              <div className="absolute top-[140px] right-0 hidden lg:block" style={{ marginRight: '-8px' }}>
+                <DataBadge name="Jieni7 · 杰尼龟" tagline="超级进化水箭龟" variant="primary" delay={0.7} />
+              </div>
+              {/* 浮动选手标签 - 左下方：王森旭 */}
+              <div className="absolute bottom-28 left-4 hidden lg:block">
+                <DataBadge name="nobody · 王森旭" tagline="电工钳最佳代言人" variant="gold" delay={0.4} />
+              </div>
+              {/* 浮动选手标签 - 右下方：指挥 */}
+              <div className="absolute bottom-28 right-4 hidden lg:block">
+                <DataBadge name="nobody · IGL" tagline="CN瓦最强指挥" variant="green" delay={0.6} />
               </div>
 
               {/* 品牌徽章 - DeFi 药丸风格 */}
