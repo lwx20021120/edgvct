@@ -795,36 +795,46 @@ function FanWallSection() {
         </button>
       </div>
 
-      {/* Message grid */}
+      {/* Scrolling message row */}
       {messages.length > 0 ? (
-        <div className="w-full" style={{ maxWidth: 1240 }}>
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
-            style={{ gap: 16 }}
-          >
-            {messages.slice(0, 30).map((msg) => (
-              <div
-                key={msg.id}
-                className="flex flex-col"
-                style={{
-                  padding: 20, gap: 10,
-                  backgroundColor: T.bgCard,
-                  border: `1px solid ${T.border}33`,
-                }}
-              >
-                <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
-                  {msg.nickname}
-                </span>
-                <span
+        <div className="w-full overflow-hidden" style={{ maxWidth: 1240 }}>
+          <div className="relative" style={{ padding: '16px 0' }}>
+            <motion.div
+              className="flex"
+              style={{ gap: 20 }}
+              animate={{ x: ['0%', '-100%'] }}
+              transition={{
+                x: {
+                  repeat: Infinity,
+                  duration: Math.max(messages.length * 4, 12),
+                  ease: 'linear',
+                },
+              }}
+            >
+              {messages.slice(0, 30).map((msg) => (
+                <div
+                  key={msg.id}
+                  className="flex-shrink-0 flex flex-col"
                   style={{
-                    fontSize: 15, fontWeight: 400, color: T.text,
-                    fontFamily: 'Inter, sans-serif', lineHeight: '22px',
+                    width: 360, padding: 20, gap: 10,
+                    backgroundColor: T.bgCard,
+                    border: `1px solid ${T.border}33`,
                   }}
                 >
-                  {msg.content}
-                </span>
-              </div>
-            ))}
+                  <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
+                    {msg.nickname}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 15, fontWeight: 400, color: T.text,
+                      fontFamily: 'Inter, sans-serif', lineHeight: '22px',
+                    }}
+                  >
+                    {msg.content}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
           </div>
         </div>
       ) : (
