@@ -2,8 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Upload, Send, User, Loader2, X } from 'lucide-react'
-import { ErrorBoundary } from '../components/shared/ErrorBoundary'
-import { WallSection } from '../components/wall/WallSection'
 import { useDataContext } from '../context/DataContext'
 import { useWallContext } from '../context/WallContext'
 import { useFanAuth } from '../context/FanAuthContext'
@@ -811,10 +809,6 @@ function FanWallSection() {
         </div>
       )}
 
-      {/* Original WallSection (interactive) */}
-      <ErrorBoundary>
-        <WallSection />
-      </ErrorBoundary>
     </section>
   )
 }
@@ -873,79 +867,150 @@ function ScrollingRow({ messages, direction }: { messages: import('../types').Wa
   )
 }
 
-/* ═══════════ Features Section ═══════════ */
-function FeaturesSection() {
-  const features = [
-    { t: '实时直播追踪', tag: 'Live Coverage', d: '多平台直播源聚合，不放过 EDG 任何一场比赛。自动切换最优画质，支持弹幕互动与实时比分同步。' },
-    { t: '赛中数据面板', tag: 'Match Analytics', d: '选手 ACS、K/D、爆头率实时更新，赛后自动生成数据分析报告。支持历史数据回溯与对比。' },
-    { t: '选手资料档案', tag: 'Player Profiles', d: '每位选手的完整资料：英雄池热力图、近期状态评分、高光时刻集锦。数据来源 Riot 官方 API 与社区精选。' },
-    { t: '粉丝应援社区', tag: 'Fan Community', d: '应援墙实时互动，为选手加油鼓劲。支持文字、图片多种应援形式，精选应援直达选手。' },
-    { t: '赛事日程管理', tag: 'Schedule & Alerts', d: 'EDG 比赛日程一目了然，赛前推送提醒、赛中实时比分、赛后自动生成战报。' },
+/* ═══════════ 寄语 Section ═══════════ */
+function MessageToPlayersSection() {
+  const players = [
+    {
+      name: 'ZmjjKK · 康康',
+      subtitle: 'CN 第一狙，世界顶级决斗者',
+      message: '康康，你让我想起一句话：天才只是入场券，热爱才是天花板。你的狙不是工具，是刻在骨子里的直觉——开镜、甩枪、击杀，一气呵成。那些把外网解说惊到失语的精彩操作，是你每天训练十几个小时换来的肌肉记忆。从被质疑"只会炸鱼"到站在世界之巅，你用了不到两年。伦敦大师赛，继续用你的狙告诉所有人：CN 决斗者，从来不比任何人差。康神，我们等你再唱一次兰花草。',
+    },
+    {
+      name: 'Smoggy · 张钊',
+      subtitle: '御驾亲征，EDG 最稳的底牌',
+      message: '钊哥，你是那种不需要数据证明自己的选手——因为看过比赛的人都知道你有多强。残局一打三面不改色，封烟控图行云流水。你不是舞台上最亮的灯，但你是整个舞台的地基。每一个队友的高光时刻背后，都有你默默架枪、铺烟、拉扯空间的影子。你说过"御驾亲征"，这次伦敦，我们等着你再披龙袍。老将不死，只是愈发锋利。钊哥，伦敦见。',
+    },
+    {
+      name: 'CHICHOO · 球球',
+      subtitle: '最高的丘陵，永远坚韧',
+      message: '球球，你的成长是所有淀粉最骄傲的事。从那个被弹幕调侃身高的"小个子"，到捧起世界冠军奖杯的 CHICHOO，你用实力让所有玩笑变成了致敬——"最高的丘陵"不再是一句调侃，而是对手眼中最不想遇到的哨位。你的 Cypher 绊索和 Killjoy 炮台，每一样道具在你手里都像活过来了一样，总能预判到对手的路线，在最关键的位置架好枪等着他们自投罗网。你是 EDG 最可靠的兜底，是队友身后最稳的防线。伦敦，继续做那座让对手望而生畏的"最高的丘陵"。球球，冲！',
+    },
+    {
+      name: 'Jieni7 · 杰尼龟',
+      subtitle: '超级进化水箭龟，新人的锋芒无人可挡',
+      message: '杰尼，你可能是这支 EDG 里最被低估的一个——但真正懂比赛的人，都知道你的价值。从替补席到首发，从默默无闻到关键时刻站出来的英雄，你用一场又一场的稳定发挥证明了：你配得上这个位置。年轻不是短板，是你的武器。你敢打敢拼、不怯场的心态，是很多老将都羡慕的品质。"进化水箭龟"不只是梗，是你一次次突破自我的真实写照。杰尼，伦敦是你的新舞台，让世界记住你的 ID。',
+    },
+    {
+      name: 'nobody · 王森旭',
+      subtitle: 'EDG 的大脑，CN 瓦最强 IGL',
+      message: '王哥，如果说康康是 EDG 的尖刀，那你就是 EDG 的灵魂。指挥位是最容易被忽视的位置——镜头永远对准杀人的决斗者，很少有人能看到你在背后做了多少功课。每一张图的站位研究，每一个战术的反复推演，每一个残局的冷静调度——这些看不见的努力，才是 EDG 能走到今天的基石。从"电工钳"的玩笑到冠军指挥的蜕变，你经历了太多的压力和质疑，但你从没停下前进的脚步。王哥，伦敦的舞台上继续用你的指挥才华带领兄弟们冲锋。CN 瓦需要你这样的 IGL。',
+    },
   ]
 
   return (
     <section
       className="flex flex-col items-center"
       style={{
-        width: '100%', maxWidth: 1440, padding: '120px 60px', gap: 32,
+        width: '100%', maxWidth: 1440, padding: '100px 60px', gap: 40,
         backgroundColor: T.featAccent,
       }}
     >
-      <h2
-        className="text-center"
-        style={{ fontSize: 36, fontWeight: 700, color: T.accent, fontFamily: 'Space Grotesk, Inter, sans-serif' }}
-      >
-        为什么选择 EDG 应援站？
-      </h2>
-      <p
-        className="text-center"
-        style={{ fontSize: 16, fontWeight: 400, color: T.text2, fontFamily: 'Inter, sans-serif', maxWidth: 900, lineHeight: '1.6' }}
-      >
-        一站聚合 EDG 所有赛事信息，从直播到数据、从选手到社区
-      </p>
+      {/* Title */}
+      <div className="flex flex-col items-center text-center" style={{ gap: 12, maxWidth: 800 }}>
+        <span
+          style={{
+            fontSize: 14, fontWeight: 500, color: T.accent,
+            fontFamily: 'JetBrains Mono, monospace', letterSpacing: 2,
+          }}
+        >
+          04 — 粉丝寄语
+        </span>
+        <h2
+          style={{
+            fontSize: 36, fontWeight: 700, color: T.accent,
+            fontFamily: 'Space Grotesk, Inter, sans-serif',
+          }}
+        >
+          寄语
+        </h2>
+        <p
+          style={{
+            fontSize: 16, fontWeight: 400, color: T.text2, fontFamily: 'Inter, sans-serif',
+            lineHeight: '1.7', maxWidth: 700,
+          }}
+        >
+          致 EDG 的每一位战士——从伊斯坦布尔到伦敦，四年的冠军之路
+        </p>
+      </div>
 
-      <div className="flex flex-col w-full" style={{ gap: 12, maxWidth: 1000, marginTop: 16 }}>
-        {features.map((f, i) => (
+      {/* Player cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full" style={{ maxWidth: 1240 }}>
+        {players.map((p, i) => (
           <motion.div
-            key={i}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
+            key={p.name}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.08 }}
             viewport={{ once: true }}
             className="flex flex-col"
             style={{
-              padding: 28, gap: 10,
-              backgroundColor: T.featBg,
-              borderLeft: `3px solid ${T.accent}66`,
+              padding: 28, gap: 12,
+              backgroundColor: T.bgCard,
+              borderLeft: `3px solid ${T.accent}`,
             }}
           >
-            <h3 style={{ fontSize: 20, fontWeight: 700, color: T.text, fontFamily: 'Inter, sans-serif' }}>
-              {f.t}
-            </h3>
-            <span style={{ fontSize: 13, fontWeight: 600, color: T.accent, fontFamily: 'JetBrains Mono, monospace', letterSpacing: 1 }}>
-              {f.tag}
-            </span>
-            <p style={{ fontSize: 14, fontWeight: 400, color: T.text2, fontFamily: 'Inter, sans-serif', lineHeight: '1.6' }}>
-              {f.d}
+            <div className="flex flex-col" style={{ gap: 4 }}>
+              <h3
+                style={{
+                  fontSize: 18, fontWeight: 700, color: T.text,
+                  fontFamily: 'Space Grotesk, Inter, sans-serif',
+                }}
+              >
+                {p.name}
+              </h3>
+              <span
+                style={{
+                  fontSize: 13, fontWeight: 600, color: T.accent,
+                  fontFamily: 'Inter, sans-serif',
+                }}
+              >
+                {p.subtitle}
+              </span>
+            </div>
+            <p
+              style={{
+                fontSize: 14, fontWeight: 400, color: T.text2,
+                fontFamily: 'Inter, sans-serif', lineHeight: '1.75',
+              }}
+            >
+              {p.message}
             </p>
           </motion.div>
         ))}
       </div>
 
-      <p
-        className="text-center"
-        style={{ fontSize: 16, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif', maxWidth: 900, marginTop: 32 }}
+      {/* Conclusion */}
+      <div
+        className="flex flex-col items-center text-center w-full"
+        style={{
+          maxWidth: 800, marginTop: 16, padding: 32,
+          backgroundColor: T.bgCard, border: `1px solid ${T.border}33`,
+          gap: 8,
+        }}
       >
-        更多功能持续开发中。如果你有想法，欢迎在应援墙留言或访问我们的 GitHub 仓库贡献代码。
-      </p>
+        <p
+          style={{
+            fontSize: 18, fontWeight: 600, color: T.text,
+            fontFamily: 'Space Grotesk, Inter, sans-serif', lineHeight: '1.6',
+          }}
+        >
+          五个人，五种风格，一颗冠军的心
+        </p>
+        <p
+          style={{
+            fontSize: 16, fontWeight: 500, color: T.accent,
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          EDG，去伦敦把冠军再带回来一次。淀粉，永远在。
+        </p>
+      </div>
     </section>
   )
 }
 
 /* ═══════════ Final CTA ═══════════ */
 function FinalCTA() {
-  const { isLoggedIn } = useFanAuth()
-
   return (
     <section
       className="flex flex-col items-center justify-center text-center"
@@ -965,19 +1030,6 @@ function FinalCTA() {
       <p style={{ fontSize: 18, fontWeight: 400, color: T.text2, fontFamily: 'Inter, sans-serif', maxWidth: 500 }}>
         加入应援站，不错过每一场精彩比赛
       </p>
-      <Link to={isLoggedIn ? '/' : '/login'}>
-        <button
-          className="flex items-center justify-center hover:opacity-90 transition-opacity"
-          style={{
-            height: 58, padding: '0 48px', backgroundColor: T.accent, border: 'none', cursor: 'pointer',
-            boxShadow: `0 0 24px ${T.accent}66`,
-          }}
-        >
-          <span style={{ fontSize: 18, fontWeight: 700, color: '#FFFFFF', fontFamily: 'Inter, sans-serif', letterSpacing: 2 }}>
-            {isLoggedIn ? '立即上传应援视频' : '立即登录加入'}
-          </span>
-        </button>
-      </Link>
     </section>
   )
 }
@@ -1079,8 +1131,8 @@ export function HomePage() {
 
       <Divider />
 
-      {/* Features */}
-      <FeaturesSection />
+      {/* 寄语 */}
+      <MessageToPlayersSection />
 
       {/* Final CTA */}
       <FinalCTA />
