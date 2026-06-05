@@ -1,4 +1,4 @@
-const SUPABASE_URL = 'https://pnimmsjwvxeksyuoqrze.supabase.co'
+const SUPABASE_URL = 'https://pninmmjwvxeksyuoqrze.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_JrxjyUq4OIwo4FmjEcnEew_T6mKSeC7'
 
 export default async function handler(request) {

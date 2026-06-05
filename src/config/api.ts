@@ -2,9 +2,11 @@
 // In production EdgeOne, the full URL is used directly
 const BASE = import.meta.env.DEV
   ? '/api/supabase'
-  : 'https://pnimmsjwvxeksyuoqrze.supabase.co'
+  : 'https://pninmmjwvxeksyuoqrze.supabase.co'
 
-const KEY = 'sb_publishable_JrxjyUq4OIwo4FmjEcnEew_T6mKSeC7'
+// Supabase Key — Publishable Key 也可用于 REST API (PostgREST)
+const KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+  || 'sb_publishable_JrxjyUq4OIwo4FmjEcnEew_T6mKSeC7' // fallback
 
 const headers = {
   'apikey': KEY,
@@ -28,6 +30,23 @@ export async function apiPost(path: string, body: unknown) {
   const text = await r.text()
   if (!r.ok) throw new Error(`${r.status}: ${text.slice(0, 200)}`)
   try { return JSON.parse(text) } catch { return text }
+}
+
+export async function apiPatch(path: string, body: unknown) {
+  const r = await fetch(`${BASE}${path}`, {
+    method: 'PATCH',
+    headers: { ...headers, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+    body: JSON.stringify(body),
+  })
+  if (!r.ok) throw new Error(`${r.status}`)
+}
+
+export async function apiDelete(path: string) {
+  const r = await fetch(`${BASE}${path}`, {
+    method: 'DELETE',
+    headers: { ...headers, 'Prefer': 'return=minimal' },
+  })
+  if (!r.ok) throw new Error(`${r.status}`)
 }
 
 export function apiUpload(bucket: string, fileName: string, file: File) {

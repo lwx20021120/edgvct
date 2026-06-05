@@ -2,8 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import type { IncomingMessage, ServerResponse } from 'http'
 
-const SUPABASE_URL = 'https://pnimmsjwvxeksyuoqrze.supabase.co'
-const SUPABASE_KEY = 'sb_publishable_JrxjyUq4OIwo4FmjEcnEew_T6mKSeC7'
+const SUPABASE_URL = 'https://pninmmjwvxeksyuoqrze.supabase.co'
+// Supabase Key — Publishable Key 也可用于 REST API
+const SUPABASE_KEY = process.env.VITE_SUPABASE_ANON_KEY
+  || 'sb_publishable_JrxjyUq4OIwo4FmjEcnEew_T6mKSeC7' // fallback
 
 function dataProxyMiddleware() {
   return async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
@@ -121,7 +123,7 @@ export default defineConfig(({ command }) => ({
     port: 5173,
     proxy: {
       '/api/supabase': {
-        target: 'https://pnimmsjwvxeksyuoqrze.supabase.co',
+        target: 'https://pninmmjwvxeksyuoqrze.supabase.co',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/supabase/, ''),
       },
