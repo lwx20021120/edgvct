@@ -10,6 +10,7 @@ interface AdminLoginProps {
 }
 
 export function AdminLogin({ onLogin }: AdminLoginProps) {
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const { login } = useAdminAuth()
@@ -17,17 +18,17 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!password.trim()) return
+    if (!username.trim() || !password.trim()) return
 
     setLoading(true)
-    const success = await login(password)
+    const success = await login(username.trim(), password)
     setLoading(false)
 
     if (success) {
       showToast('登录成功')
       onLogin()
     } else {
-      showToast('密码错误', 'error')
+      showToast('用户名或密码错误', 'error')
       setPassword('')
     }
   }
@@ -53,21 +54,28 @@ export function AdminLogin({ onLogin }: AdminLoginProps) {
               <Lock className="h-6 w-6 text-primary" />
             </div>
             <h1 className="mt-3 text-h2 font-bold text-text-primary">管理面板</h1>
-            <p className="mt-1 text-body-sm text-text-tertiary">请输入管理密码</p>
+            <p className="mt-1 text-body-sm text-text-tertiary">请输入管理员账号和密码</p>
           </div>
 
           <form onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="管理员账号"
+              autoFocus
+              className="w-full rounded-md border border-border bg-bg-secondary px-4 py-3 text-body text-text-primary placeholder-text-tertiary outline-none focus:border-primary/50 transition-colors"
+            />
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="管理密码"
-              autoFocus
-              className="w-full rounded-md border border-border bg-bg-secondary px-4 py-3 text-body text-text-primary placeholder-text-tertiary outline-none focus:border-primary/50 transition-colors"
+              className="w-full rounded-md border border-border bg-bg-secondary px-4 py-3 text-body text-text-primary placeholder-text-tertiary outline-none focus:border-primary/50 transition-colors mt-3"
             />
             <button
               type="submit"
-              disabled={loading || !password.trim()}
+              disabled={loading || !username.trim() || !password.trim()}
               className="mt-4 w-full rounded-md bg-primary py-3 text-body font-semibold text-white hover:bg-primary-hover active:scale-[0.98] transition-all disabled:opacity-50"
             >
               {loading ? (

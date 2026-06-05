@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Star, StarOff, Save } from 'lucide-react'
 import { useDataContext } from '../../context/DataContext'
 import { useToast } from '../shared/Toast'
+import { pushOverride } from '../../config/sync'
 import type { Player } from '../../types'
 
 export function MVPSelector() {
@@ -19,8 +20,13 @@ export function MVPSelector() {
   }
 
   function handleSave() {
+    // 1. 本地立即生效
     applyOverride({ mvpOverrides: localMVP })
-    showToast('MVP 已更新')
+
+    // 2. 异步推送到 Supabase
+    pushOverride('mvp', localMVP as unknown as Record<string, unknown>)
+
+    showToast('MVP 已更新（已同步到云端）')
   }
 
   const allPlayers = [...edgPlayers, ...opponentPlayers]

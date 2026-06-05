@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Save, RotateCcw } from 'lucide-react'
 import { useDataContext } from '../../context/DataContext'
 import { useToast } from '../shared/Toast'
+import { pushOverride } from '../../config/sync'
 import type { Score, MapResult, MatchStatus } from '../../types'
 
 const MAP_OPTIONS = [
@@ -37,11 +38,18 @@ export function ScoreEditor() {
 
   function handleSave() {
     if (!match) return
+
+    // 1. 本地立即生效
     applyOverride({
       scoreOverrides: { [match.id]: { score, maps } },
       statusOverrides: { [match.id]: status },
     })
-    showToast('比分已更新')
+
+    // 2. 异步推送到 Supabase
+    pushOverride('score', { [match.id]: { score, maps } })
+    pushOverride('status', { [match.id]: status })
+
+    showToast('比分已更新（已同步到云端）')
   }
 
   function handleReset() {

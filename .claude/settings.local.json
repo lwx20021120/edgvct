@@ -27,7 +27,8 @@
       "Bash(npx ts-node *)",
       "Bash(robocopy \"C:\\\\Users\\\\折纸为枫\\\\AppData\\\\Local\\\\Microsoft\\\\Edge\\\\User Data\" \"%TEMP%\\\\edge-profile-copy\" /E /XD \"Cache\" \"Code Cache\" \"GPUCache\" \"Service Worker\" \"IndexedDB\" /NJH /NJS /NP /NDL /NS)",
       "Bash(taskkill /F /IM msedge.exe)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(node *)"
     ]
   }
 }
