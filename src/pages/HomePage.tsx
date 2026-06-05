@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Upload, Send, User, Loader2, X } from 'lucide-react'
@@ -744,10 +744,6 @@ function FanWallSection() {
     }
   }
 
-  // Split messages into 2 rows for scrolling effect
-  const row1 = messages.filter((_, i) => i % 2 === 0).slice(0, 20)
-  const row2 = messages.filter((_, i) => i % 2 === 1).slice(0, 20)
-
   return (
     <section
       id="应援墙"
@@ -799,84 +795,47 @@ function FanWallSection() {
         </button>
       </div>
 
-      {/* Scrolling message rows */}
-      {messages.length > 0 && (
-        <div className="w-full overflow-hidden" style={{ maxWidth: 1240 }}>
-          {/* Row 1 — scroll left */}
-          <ScrollingRow messages={row1} direction="left" />
-          {/* Row 2 — scroll right */}
-          <ScrollingRow messages={row2} direction="right" />
+      {/* Message grid */}
+      {messages.length > 0 ? (
+        <div className="w-full" style={{ maxWidth: 1240 }}>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+            style={{ gap: 16 }}
+          >
+            {messages.slice(0, 30).map((msg) => (
+              <div
+                key={msg.id}
+                className="flex flex-col"
+                style={{
+                  padding: 20, gap: 10,
+                  backgroundColor: T.bgCard,
+                  border: `1px solid ${T.border}33`,
+                }}
+              >
+                <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
+                  {msg.nickname}
+                </span>
+                <span
+                  style={{
+                    fontSize: 15, fontWeight: 400, color: T.text,
+                    fontFamily: 'Inter, sans-serif', lineHeight: '22px',
+                  }}
+                >
+                  {msg.content}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center" style={{ padding: '24px 0' }}>
+          <span style={{ fontSize: 14, color: T.text3, fontFamily: 'Inter, sans-serif' }}>
+            还没有应援留言，成为第一个为 EDG 加油的人吧！
+          </span>
         </div>
       )}
 
     </section>
-  )
-}
-
-/* ═══════════ Scrolling Message Row ═══════════ */
-function ScrollingRow({ messages, direction }: { messages: import('../types').WallMessage[]; direction: 'left' | 'right' }) {
-  const scrollRef = useRef<HTMLDivElement>(null)
-
-  // Duplicate 3× so the viewport always has enough content for seamless looping
-  const items = [...messages, ...messages, ...messages]
-
-  // Slow down: ~12s per message set for smooth, readable scrolling
-  const duration = Math.max(messages.length * 12, 20)
-
-  if (messages.length === 0) {
-    return (
-      <div className="flex items-center justify-center" style={{ padding: '24px 0' }}>
-        <span style={{ fontSize: 14, color: T.text3, fontFamily: 'Inter, sans-serif' }}>
-          还没有应援留言，成为第一个为 EDG 加油的人吧！
-        </span>
-      </div>
-    )
-  }
-
-  return (
-    <div className="overflow-hidden relative" style={{ padding: '16px 0' }}>
-      <motion.div
-        ref={scrollRef}
-        className="flex"
-        style={{ gap: 20 }}
-        animate={{
-          x: direction === 'left' ? ['0%', '-33.333%'] : ['-33.333%', '0%'],
-        }}
-        transition={{
-          x: {
-            repeat: Infinity,
-            duration,
-            ease: 'linear',
-          },
-        }}
-      >
-        {items.map((msg, i) => (
-          <div
-            key={`${msg.id}-${i}`}
-            className="flex-shrink-0 flex flex-col"
-            style={{
-              width: 360, padding: 20, gap: 10,
-              backgroundColor: T.bgCard,
-              border: `1px solid ${T.border}33`,
-            }}
-          >
-            <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
-              {msg.nickname}
-            </span>
-            <span
-              style={{
-                fontSize: 15, fontWeight: 400, color: T.text,
-                fontFamily: 'Inter, sans-serif', lineHeight: '22px',
-                overflow: 'hidden', display: '-webkit-box',
-                WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
-              }}
-            >
-              {msg.content}
-            </span>
-          </div>
-        ))}
-      </motion.div>
-    </div>
   )
 }
 
