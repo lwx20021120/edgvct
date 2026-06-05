@@ -813,7 +813,7 @@ function FanWallSection() {
               style={{ gap: 24 }}
               animate={{ x: ['0%', '-100%'] }}
               transition={{
-                x: { repeat: Infinity, duration: Math.max(row1.length * 25, 40), ease: 'linear' },
+                x: { repeat: Infinity, duration: Math.max(row1.length * 8, 16), ease: 'linear' },
               }}
             >
               {row1.map((msg) => (
@@ -841,9 +841,9 @@ function FanWallSection() {
             <motion.div
               className="flex"
               style={{ gap: 24 }}
-              animate={{ x: ['-100%', '0%'] }}
+              animate={{ x: ['0%', '100%'] }}
               transition={{
-                x: { repeat: Infinity, duration: Math.max(row2.length * 25, 40), ease: 'linear' },
+                x: { repeat: Infinity, duration: Math.max(row2.length * 8, 16), ease: 'linear' },
               }}
             >
               {row2.map((msg) => (
