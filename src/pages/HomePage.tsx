@@ -1,7 +1,14 @@
+import { useState, useEffect, useRef } from 'react'
 import { ErrorBoundary } from '../components/shared/ErrorBoundary'
 import { WallSection } from '../components/wall/WallSection'
+import { useDataContext } from '../context/DataContext'
+import { presetVideos } from '../config/videos'
+import { apiPost, apiUpload, getPublicUrl } from '../config/api'
+import { useToast } from '../components/shared/Toast'
+import { ChevronLeft, ChevronRight, Pause, Play, Upload, Loader2 } from 'lucide-react'
+import type { Match, Player } from '../types'
 
-/* ──────────────── 设计令牌（来自 Ardot 画布 node tree）──────────────── */
+/* ──────────────── 设计令牌 ──────────────── */
 const COLORS = {
   accent: '#E11D48',
   bg: '#000000',
@@ -12,6 +19,62 @@ const COLORS = {
   textSecondary: '#94A3B8',
   textTertiary: '#666666',
 } as const
+
+/* ──────────────── 角色标签映射 ──────────────── */
+const ROLE_LABELS: Record<string, string> = {
+  Duelist: '决斗者',
+  Initiator: '先锋',
+  Controller: '控场者',
+  Sentinel: '哨卫',
+  Flex: '自由人',
+}
+
+/* ──────────────── 视频类型 ──────────────── */
+interface VideoItem {
+  id: string
+  title: string
+  author: string
+  type: 'bilibili' | 'upload'
+  bvid?: string
+  videoUrl?: string
+  createdAt: number
+  isPinned: boolean
+}
+
+const PRESET_VIDEO_ITEMS: VideoItem[] = presetVideos.map((v, i) => ({
+  id: `preset-${i}`,
+  title: v.title,
+  author: v.author,
+  type: v.type,
+  bvid: v.bvid,
+  createdAt: Date.now(),
+  isPinned: v.isPinned,
+}))
+
+/* ──────────────── 工具：北京时间 ──────────────── */
+function toBeijingTime(iso: string): string {
+  const date = new Date(iso)
+  const opts: Intl.DateTimeFormatOptions = {
+    month: 'numeric',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Asia/Shanghai',
+  }
+  return new Intl.DateTimeFormat('zh-CN', opts).format(date)
+}
+
+/* ──────────────── 工具：比赛状态 ──────────────── */
+function getStatusConfig(status: string) {
+  switch (status) {
+    case 'live':
+      return { label: 'LIVE', live: true }
+    case 'finished':
+      return { label: 'FINISHED', live: false }
+    default:
+      return { label: 'UPCOMING', live: false }
+  }
+}
 
 /* ──────────────── Header ──────────────── */
 function Header() {
@@ -90,8 +153,505 @@ function Divider() {
   )
 }
 
-/* ──────────────── HomePage ──────────────── */
+/* ════════════════════════════ VIDEO PLAYER ════════════════════════════ */
+function VideoPlayer({
+  videos,
+  currentIndex,
+  onPrev,
+  onNext,
+  onSelectIndex,
+  isPlaying,
+  onTogglePlay,
+}: {
+  videos: VideoItem[]
+  currentIndex: number
+  onPrev: () => void
+  onNext: () => void
+  onSelectIndex: (i: number) => void
+  isPlaying: boolean
+  onTogglePlay: () => void
+}) {
+  if (videos.length === 0) {
+    return (
+      <div
+        className="w-[800px] h-[360px] flex items-center justify-center"
+        style={{
+          background: `linear-gradient(180deg, ${COLORS.accent}0D 0%, transparent 100%)`,
+          border: `1px solid ${COLORS.border}80`,
+        }}
+      >
+        <span
+          className="text-[14px] tracking-[1px]"
+          style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textSecondary }}
+        >
+          暂无视频
+        </span>
+      </div>
+    )
+  }
+
+  const current = videos[currentIndex]
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Main player */}
+      <div
+        className="relative w-[800px] h-[360px] overflow-hidden"
+        style={{ border: `1px solid ${COLORS.border}80` }}
+      >
+        {current.type === 'bilibili' ? (
+          <iframe
+            key={current.bvid}
+            src={`https://player.bilibili.com/player.html?bvid=${current.bvid}&autoplay=1&muted=1`}
+            className="absolute inset-0 w-full h-full border-0"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+          />
+        ) : (
+          <video
+            key={current.videoUrl}
+            src={current.videoUrl}
+            className="absolute inset-0 w-full h-full object-contain bg-black"
+            controls
+            autoPlay
+            muted
+            playsInline
+          />
+        )}
+
+        {/* Overlay info */}
+        <div
+          className="absolute bottom-0 left-0 right-0 flex items-end p-4"
+          style={{
+            background: `linear-gradient(180deg, transparent 0%, ${COLORS.bgCard}E6 100%)`,
+          }}
+        >
+          <div className="flex flex-col gap-1">
+            <span className="text-[14px] font-semibold" style={{ color: COLORS.textPrimary }}>
+              {current.title}
+            </span>
+            <span className="text-[12px]" style={{ color: COLORS.textSecondary }}>
+              @{current.author}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Controls */}
+      <div className="flex items-center justify-between w-[800px]">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onPrev}
+            className="rounded-lg p-2 transition-colors hover:opacity-80"
+            style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}66` }}
+          >
+            <ChevronLeft size={20} style={{ color: COLORS.textSecondary }} />
+          </button>
+          <button
+            onClick={onTogglePlay}
+            className="rounded-lg p-2 transition-colors hover:opacity-80"
+            style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}66` }}
+          >
+            {isPlaying ? (
+              <Pause size={20} style={{ color: COLORS.textSecondary }} />
+            ) : (
+              <Play size={20} style={{ color: COLORS.textSecondary }} />
+            )}
+          </button>
+          <button
+            onClick={onNext}
+            className="rounded-lg p-2 transition-colors hover:opacity-80"
+            style={{ backgroundColor: COLORS.bgCard, border: `1px solid ${COLORS.border}66` }}
+          >
+            <ChevronRight size={20} style={{ color: COLORS.textSecondary }} />
+          </button>
+        </div>
+
+        <span
+          className="text-[12px] tracking-[1px]"
+          style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textTertiary }}
+        >
+          {currentIndex + 1} / {videos.length}
+        </span>
+      </div>
+
+      {/* Thumbnail strip */}
+      <div className="flex gap-2 overflow-x-auto w-[800px] pb-1">
+        {videos.map((v, i) => (
+          <button
+            key={v.id}
+            onClick={() => onSelectIndex(i)}
+            className={`relative flex-shrink-0 w-[120px] h-[68px] rounded-lg overflow-hidden border-2 transition-colors ${
+              i === currentIndex ? 'border-[#E11D48]' : 'border-transparent'
+            }`}
+            style={{ backgroundColor: COLORS.bgCard }}
+          >
+            <div className="absolute inset-0 flex items-center justify-center">
+              {v.type === 'bilibili' ? (
+                <span className="text-[10px]" style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textTertiary }}>
+                  B站视频
+                </span>
+              ) : (
+                <Play size={16} style={{ color: COLORS.textTertiary }} />
+              )}
+            </div>
+            <div
+              className="absolute bottom-0 left-0 right-0 px-1.5 py-0.5"
+              style={{ backgroundColor: `${COLORS.bgCard}CC` }}
+            >
+              <p className="text-[10px] truncate" style={{ color: COLORS.textSecondary }}>
+                {v.title}
+              </p>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+/* ════════════════════════════ VIDEO UPLOAD FORM ════════════════════════════ */
+function VideoUploadForm() {
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+  const { showToast } = useToast()
+
+  async function handleUpload(file: File) {
+    if (!title || !author) {
+      showToast('请填写标题和昵称', 'warning')
+      return
+    }
+    setUploading(true)
+    const fileName = `${Date.now()}-${file.name}`
+
+    const res = await apiUpload('fan_videos', fileName, file)
+    if (!res.ok) {
+      showToast('上传失败，请稍后重试', 'error')
+      setUploading(false)
+      return
+    }
+
+    const publicUrl = getPublicUrl('fan_videos', fileName)
+
+    await apiPost('/rest/v1/video_playlist', {
+      title,
+      author,
+      type: 'upload',
+      video_url: publicUrl,
+    })
+
+    showToast('上传成功！视频已加入轮播列表')
+    setTitle('')
+    setAuthor('')
+    setUploading(false)
+  }
+
+  return (
+    <div
+      className="flex flex-col gap-5 p-8 max-w-[600px] mx-auto"
+      style={{
+        backgroundColor: COLORS.bgCard,
+        border: `1px solid ${COLORS.border}66`,
+      }}
+    >
+      <div className="flex items-center gap-3">
+        <Upload size={24} style={{ color: COLORS.accent }} />
+        <h3
+          className="text-[20px] font-bold"
+          style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+        >
+          上传应援视频
+        </h3>
+      </div>
+
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="视频标题（如：EDG加油混剪）"
+        className="w-full px-4 py-3 text-[14px] transition-colors"
+        style={{
+          backgroundColor: COLORS.bgSecondary,
+          border: `1px solid ${COLORS.border}66`,
+          color: COLORS.textPrimary,
+          outline: 'none',
+        }}
+      />
+
+      <input
+        value={author}
+        onChange={(e) => setAuthor(e.target.value)}
+        placeholder="你的昵称"
+        className="w-full px-4 py-3 text-[14px] transition-colors"
+        style={{
+          backgroundColor: COLORS.bgSecondary,
+          border: `1px solid ${COLORS.border}66`,
+          color: COLORS.textPrimary,
+          outline: 'none',
+        }}
+      />
+
+      <button
+        onClick={() => fileRef.current?.click()}
+        disabled={uploading}
+        className="w-full py-3.5 text-[14px] font-bold tracking-[1.5px] transition-opacity hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+        style={{ backgroundColor: COLORS.accent, color: '#FFFFFF' }}
+      >
+        {uploading ? (
+          <>
+            <Loader2 size={18} className="animate-spin" />
+            上传中...
+          </>
+        ) : (
+          '选择视频文件'
+        )}
+      </button>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="video/*"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0]
+          if (file) handleUpload(file)
+        }}
+      />
+
+      <p
+        className="text-[12px] text-center"
+        style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textTertiary }}
+      >
+        支持 mp4 / webm，建议不超过 50MB
+      </p>
+    </div>
+  )
+}
+
+/* ════════════════════════════ MATCH CARD ════════════════════════════ */
+function MatchCardInline({ match }: { match: Match }) {
+  const statusCfg = getStatusConfig(match.status)
+
+  return (
+    <div
+      className="flex-1 flex flex-col gap-4 p-6"
+      style={{
+        backgroundColor: COLORS.bgCard,
+        boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
+      }}
+    >
+      {/* Status badge */}
+      <span
+        className="text-[12px] font-bold tracking-[2px]"
+        style={{
+          fontFamily: 'JetBrains Mono, monospace',
+          color: statusCfg.live ? COLORS.accent : COLORS.textSecondary,
+        }}
+      >
+        {statusCfg.live && (
+          <span
+            className="inline-block w-[6px] h-[6px] rounded-full mr-2 align-middle"
+            style={{
+              backgroundColor: COLORS.accent,
+              boxShadow: `0 0 8px ${COLORS.accent}`,
+            }}
+          />
+        )}
+        {statusCfg.label}
+      </span>
+
+      {/* Time */}
+      <span className="text-[14px]" style={{ color: COLORS.textSecondary, fontWeight: 500 }}>
+        {toBeijingTime(match.startTime)}（北京时间）
+      </span>
+
+      {/* Teams */}
+      <span
+        className="text-[24px] font-bold"
+        style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+      >
+        {match.edgTeam.shortName} vs {match.opponentTeam.shortName}
+      </span>
+
+      {/* Stage + Score */}
+      <div className="flex items-center justify-between mt-auto">
+        <span className="text-[14px]" style={{ color: COLORS.textTertiary }}>
+          {match.stage}
+        </span>
+        {match.status !== 'upcoming' && (
+          <span
+            className="text-[16px] font-bold tracking-[1px]"
+            style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+          >
+            {match.score.edg} : {match.score.opponent}
+          </span>
+        )}
+      </div>
+
+      {/* Format + Casters */}
+      <div className="flex items-center gap-4 text-[12px]" style={{ color: COLORS.textTertiary }}>
+        <span>{match.format}</span>
+        {match.casters && match.casters.length > 0 && (
+          <span>解说：{match.casters.join('、')}</span>
+        )}
+      </div>
+    </div>
+  )
+}
+
+/* ════════════════════════════ PLAYER CARD ════════════════════════════ */
+function PlayerCardInline({ player }: { player: Player }) {
+  const bgPhotoUrl = player.id ? `/players-bg/${player.id}.jpg` : null
+
+  return (
+    <div
+      className="flex-1 flex flex-col min-w-[180px]"
+      style={{ backgroundColor: COLORS.bgCard }}
+    >
+      {/* Photo */}
+      <div
+        className="h-[240px] flex items-center justify-center relative overflow-hidden"
+        style={{
+          background: `linear-gradient(180deg, ${COLORS.accent}1A 0%, ${COLORS.bgCard} 100%)`,
+        }}
+      >
+        {/* Background photo watermark */}
+        {bgPhotoUrl && (
+          <div
+            className="absolute inset-0 opacity-30"
+            style={{
+              backgroundImage: `url(${bgPhotoUrl})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center 15%',
+            }}
+          />
+        )}
+        {/* Avatar fallback */}
+        <div className="relative z-10 flex flex-col items-center gap-3">
+          <div
+            className={`h-20 w-20 rounded-full overflow-hidden flex items-center justify-center ${
+              player.isMVP
+                ? 'ring-2 ring-[#D4A853] shadow-[0_0_20px_rgba(212,168,83,0.3)]'
+                : 'ring-1 ring-white/10'
+            }`}
+            style={{ backgroundColor: COLORS.bgSecondary }}
+          >
+            <img
+              src={player.avatar}
+              alt={player.nickname}
+              className="h-full w-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                const el = e.target as HTMLImageElement
+                el.style.display = 'none'
+                const parent = el.parentElement
+                if (parent) {
+                  parent.style.display = 'flex'
+                  parent.style.alignItems = 'center'
+                  parent.style.justifyContent = 'center'
+                  parent.textContent = player.nickname.charAt(0).toUpperCase()
+                }
+              }}
+            />
+          </div>
+          {player.isMVP && (
+            <span
+              className="text-[11px] font-bold px-2 py-0.5 rounded"
+              style={{
+                backgroundColor: '#D4A8531A',
+                color: '#D4A853',
+                fontFamily: 'JetBrains Mono, monospace',
+              }}
+            >
+              MVP
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Info */}
+      <div className="flex flex-col gap-[6px] p-5">
+        <span
+          className="text-[20px] font-bold"
+          style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+        >
+          {player.nickname}
+        </span>
+        <span className="text-[14px]" style={{ color: COLORS.textSecondary }}>
+          {player.realName}
+        </span>
+        <span className="text-[14px]" style={{ color: COLORS.accent }}>
+          {ROLE_LABELS[player.role] || player.role}
+        </span>
+
+        {/* Stats row */}
+        <div className="w-full h-px my-2" style={{ backgroundColor: '#FFFFFF1A' }} />
+        <div className="flex gap-0 mt-1">
+          <div className="flex-1 flex flex-col gap-1 py-1">
+            <span
+              className="text-[20px] font-bold"
+              style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+            >
+              {player.stats.acs}
+            </span>
+            <span className="text-[11px]" style={{ color: COLORS.textSecondary, fontWeight: 500 }}>
+              ACS
+            </span>
+          </div>
+          <div className="flex-1 flex flex-col gap-1 py-1">
+            <span
+              className="text-[20px] font-bold"
+              style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+            >
+              {player.stats.kd.toFixed(2)}
+            </span>
+            <span className="text-[11px]" style={{ color: COLORS.textSecondary, fontWeight: 500 }}>
+              K/D
+            </span>
+          </div>
+          <div className="flex-1 flex flex-col gap-1 py-1">
+            <span
+              className="text-[20px] font-bold"
+              style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
+            >
+              {player.stats.hsPercent}%
+            </span>
+            <span className="text-[11px]" style={{ color: COLORS.textSecondary, fontWeight: 500 }}>
+              HS%
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+/* ════════════════════════════ HOMEPAGE ════════════════════════════ */
 export function HomePage() {
+  const { matches, edgPlayers } = useDataContext()
+
+  // ──── Video player state ────
+  const [videos] = useState<VideoItem[]>(PRESET_VIDEO_ITEMS)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isPlaying, setIsPlaying] = useState(true)
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Auto-rotation
+  useEffect(() => {
+    if (!isPlaying || videos.length === 0) return
+    intervalRef.current = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % videos.length)
+    }, 180000)
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [isPlaying, videos.length])
+
+  const prevVideo = () => setCurrentIndex((i) => (i - 1 + videos.length) % videos.length)
+  const nextVideo = () => setCurrentIndex((i) => (i + 1) % videos.length)
+  const togglePlay = () => setIsPlaying((p) => !p)
+
   return (
     <div className="min-h-dvh w-full" style={{ backgroundColor: COLORS.bg }}>
       <Header />
@@ -178,21 +738,16 @@ export function HomePage() {
           </button>
         </div>
 
-        {/* Visual Placeholder */}
-        <div
-          className="w-[800px] h-[360px] flex items-center justify-center"
-          style={{
-            background: `linear-gradient(180deg, ${COLORS.accent}0D 0%, transparent 100%)`,
-            border: `1px solid ${COLORS.border}80`,
-          }}
-        >
-          <span
-            className="text-[14px] tracking-[1px]"
-            style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textSecondary }}
-          >
-            赛事集锦 / 直播画面
-          </span>
-        </div>
+        {/* Video Player (replaces old placeholder) */}
+        <VideoPlayer
+          videos={videos}
+          currentIndex={currentIndex}
+          onPrev={prevVideo}
+          onNext={nextVideo}
+          onSelectIndex={setCurrentIndex}
+          isPlaying={isPlaying}
+          onTogglePlay={togglePlay}
+        />
       </section>
 
       <Divider />
@@ -210,53 +765,28 @@ export function HomePage() {
           desc="实时追踪 EDG 的比赛进度，不错过每一个精彩瞬间"
         />
 
-        <div className="flex gap-6">
-          {[
-            { status: 'LIVE', time: '6月5日 21:00', teams: 'EDG vs SEN', stage: '胜者组半决赛', live: true },
-            { status: 'UPCOMING', time: '6月7日 23:00', teams: 'TBD vs TBD', stage: '胜者组决赛', live: false },
-            { status: 'UPCOMING', time: '6月9日 02:00', teams: 'TBD vs TBD', stage: '总决赛', live: false },
-          ].map((match, i) => (
-            <div
-              key={i}
-              className="flex-1 flex flex-col gap-4 p-6"
-              style={{
-                backgroundColor: COLORS.bgCard,
-                boxShadow: '0 4px 16px rgba(0,0,0,0.3)',
-              }}
+        {matches.length === 0 ? (
+          <div
+            className="flex items-center justify-center py-12"
+            style={{
+              backgroundColor: COLORS.bgCard,
+              border: `1px solid ${COLORS.border}66`,
+            }}
+          >
+            <p
+              className="text-[14px]"
+              style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textTertiary }}
             >
-              <span
-                className="text-[12px] font-bold tracking-[2px]"
-                style={{
-                  fontFamily: 'JetBrains Mono, monospace',
-                  color: match.live ? COLORS.accent : COLORS.textSecondary,
-                }}
-              >
-                {match.live && (
-                  <span
-                    className="inline-block w-[6px] h-[6px] rounded-full mr-2 align-middle"
-                    style={{
-                      backgroundColor: COLORS.accent,
-                      boxShadow: `0 0 8px ${COLORS.accent}`,
-                    }}
-                  />
-                )}
-                {match.status}
-              </span>
-              <span className="text-[14px]" style={{ color: COLORS.textSecondary, fontWeight: 500 }}>
-                {match.time}
-              </span>
-              <span
-                className="text-[24px] font-bold"
-                style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
-              >
-                {match.teams}
-              </span>
-              <span className="text-[14px]" style={{ color: COLORS.textTertiary }}>
-                {match.stage}
-              </span>
-            </div>
-          ))}
-        </div>
+              赛程即将公布，敬请期待
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-6">
+            {matches.map((match) => (
+              <MatchCardInline key={match.id} match={match} />
+            ))}
+          </div>
+        )}
       </section>
 
       <Divider />
@@ -269,66 +799,28 @@ export function HomePage() {
           desc="了解每一位为荣耀而战的选手"
         />
 
-        <div className="flex gap-5">
-          {[
-            { name: 'ZmjjKK', role: '决斗者', stats: { acs: '285', kd: '1.32', hs: '28%' } },
-            { name: 'nobody', role: '控场者', stats: { acs: '210', kd: '1.15', hs: '22%' } },
-            { name: 'Smoggy', role: '先锋', stats: { acs: '238', kd: '1.24', hs: '25%' } },
-          ].map((player, i) => (
-            <div
-              key={i}
-              className="flex-1 flex flex-col"
-              style={{ backgroundColor: COLORS.bgCard }}
+        {edgPlayers.length === 0 ? (
+          <div
+            className="flex items-center justify-center py-12"
+            style={{
+              backgroundColor: COLORS.bgCard,
+              border: `1px solid ${COLORS.border}66`,
+            }}
+          >
+            <p
+              className="text-[14px]"
+              style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textTertiary }}
             >
-              {/* Photo placeholder */}
-              <div
-                className="h-[240px] flex items-center justify-center"
-                style={{
-                  background: `linear-gradient(180deg, ${COLORS.accent}1A 0%, ${COLORS.bgCard} 100%)`,
-                }}
-              >
-                <span
-                  className="text-[12px]"
-                  style={{ fontFamily: 'JetBrains Mono, monospace', color: COLORS.textTertiary }}
-                >
-                  选手照片
-                </span>
-              </div>
-              {/* Info */}
-              <div className="flex flex-col gap-[6px] p-5">
-                <span
-                  className="text-[20px] font-bold"
-                  style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
-                >
-                  {player.name}
-                </span>
-                <span className="text-[14px]" style={{ color: COLORS.accent }}>
-                  {player.role}
-                </span>
-                {/* Stats row */}
-                <div className="w-full h-px my-2" style={{ backgroundColor: '#FFFFFF1A' }} />
-                <div className="flex gap-0 mt-1">
-                  {Object.entries(player.stats).map(([key, val]) => (
-                    <div key={key} className="flex-1 flex flex-col gap-1 py-1">
-                      <span
-                        className="text-[20px] font-bold"
-                        style={{ fontFamily: 'Space Grotesk, Inter, sans-serif', color: COLORS.textPrimary }}
-                      >
-                        {val}
-                      </span>
-                      <span
-                        className="text-[11px]"
-                        style={{ color: COLORS.textSecondary, fontWeight: 500 }}
-                      >
-                        {key.toUpperCase()}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+              选手数据即将公布，敬请期待
+            </p>
+          </div>
+        ) : (
+          <div className="flex gap-5">
+            {edgPlayers.map((player) => (
+              <PlayerCardInline key={player.id} player={player} />
+            ))}
+          </div>
+        )}
       </section>
 
       <Divider />
@@ -376,6 +868,20 @@ export function HomePage() {
           <WallSection />
         </ErrorBoundary>
       </section>
+
+      <Divider />
+
+      {/* ═══════════════ VIDEO UPLOAD ═══════════════ */}
+      <section className="flex flex-col gap-12 px-[100px] py-[100px]">
+        <SectionHeader
+          tag="04 — 视频应援"
+          title="上传你的应援视频"
+          desc="分享你的创意，让更多人看到 EDG 的精彩瞬间"
+        />
+        <VideoUploadForm />
+      </section>
+
+      <Divider />
 
       {/* ═══════════════ FEATURES ═══════════════ */}
       <section
