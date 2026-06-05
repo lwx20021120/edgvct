@@ -744,14 +744,11 @@ function FanWallSection() {
     }
   }
 
-  // Randomly assign each message to row 1 or row 2 (stable by id hash)
+  // Randomly shuffle and split into two rows
   const { row1, row2 } = useMemo(() => {
-    const r1: typeof messages = []
-    const r2: typeof messages = []
-    messages.forEach((m) => {
-      const hash = m.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
-      ;(hash % 2 === 0 ? r1 : r2).push(m)
-    })
+    const shuffled = [...messages].sort(() => Math.random() - 0.5)
+    const r1 = shuffled.filter((_, i) => i % 2 === 0)
+    const r2 = shuffled.filter((_, i) => i % 2 === 1)
     return { row1: r1, row2: r2 }
   }, [messages])
 
@@ -810,13 +807,13 @@ function FanWallSection() {
       {messages.length > 0 ? (
         <div className="w-full overflow-hidden" style={{ maxWidth: 1240 }}>
           {/* Row 1 — scroll left */}
-          <div className="relative" style={{ padding: '12px 0' }}>
+          <div className="relative" style={{ padding: '14px 0' }}>
             <motion.div
               className="flex"
-              style={{ gap: 20 }}
+              style={{ gap: 24 }}
               animate={{ x: ['0%', '-100%'] }}
               transition={{
-                x: { repeat: Infinity, duration: Math.max(row1.length * 4, 12), ease: 'linear' },
+                x: { repeat: Infinity, duration: Math.max(row1.length * 25, 40), ease: 'linear' },
               }}
             >
               {row1.map((msg) => (
@@ -824,15 +821,15 @@ function FanWallSection() {
                   key={msg.id}
                   className="flex-shrink-0 flex flex-col"
                   style={{
-                    width: 340, padding: 18, gap: 8,
+                    width: 400, padding: 24, gap: 10,
                     backgroundColor: T.bgCard,
                     border: `1px solid ${T.border}33`,
                   }}
                 >
-                  <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
                     {msg.nickname}
                   </span>
-                  <span style={{ fontSize: 15, fontWeight: 400, color: T.text, fontFamily: 'Inter, sans-serif', lineHeight: '22px' }}>
+                  <span style={{ fontSize: 16, fontWeight: 400, color: T.text, fontFamily: 'Inter, sans-serif', lineHeight: '24px' }}>
                     {msg.content}
                   </span>
                 </div>
@@ -840,13 +837,13 @@ function FanWallSection() {
             </motion.div>
           </div>
           {/* Row 2 — scroll right */}
-          <div className="relative" style={{ padding: '12px 0' }}>
+          <div className="relative" style={{ padding: '14px 0' }}>
             <motion.div
               className="flex"
-              style={{ gap: 20 }}
+              style={{ gap: 24 }}
               animate={{ x: ['-100%', '0%'] }}
               transition={{
-                x: { repeat: Infinity, duration: Math.max(row2.length * 4, 12), ease: 'linear' },
+                x: { repeat: Infinity, duration: Math.max(row2.length * 25, 40), ease: 'linear' },
               }}
             >
               {row2.map((msg) => (
@@ -854,15 +851,15 @@ function FanWallSection() {
                   key={msg.id}
                   className="flex-shrink-0 flex flex-col"
                   style={{
-                    width: 340, padding: 18, gap: 8,
+                    width: 400, padding: 24, gap: 10,
                     backgroundColor: T.bgCard,
                     border: `1px solid ${T.border}33`,
                   }}
                 >
-                  <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
+                  <span style={{ fontSize: 15, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
                     {msg.nickname}
                   </span>
-                  <span style={{ fontSize: 15, fontWeight: 400, color: T.text, fontFamily: 'Inter, sans-serif', lineHeight: '22px' }}>
+                  <span style={{ fontSize: 16, fontWeight: 400, color: T.text, fontFamily: 'Inter, sans-serif', lineHeight: '24px' }}>
                     {msg.content}
                   </span>
                 </div>
