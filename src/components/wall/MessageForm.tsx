@@ -1,19 +1,22 @@
 import { useState, useRef } from 'react'
-import { ImagePlus, Send, X, Loader2 } from 'lucide-react'
+import { ImagePlus, Send, X, Loader2, LogIn } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useWallContext } from '../../context/WallContext'
+import { useFanAuth } from '../../context/FanAuthContext'
 import { useToast } from '../shared/Toast'
 import { compressImage } from '../../hooks/useWallMessages'
-import { MAX_NICKNAME_LENGTH, MAX_MESSAGE_LENGTH } from '../../config/constants'
+import { MAX_MESSAGE_LENGTH } from '../../config/constants'
 
 export function MessageForm() {
-  const [nickname, setNickname] = useState('')
   const [content, setContent] = useState('')
   const [image, setImage] = useState<string | null>(null)
   const [uploading, setUploading] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const { addMessage } = useWallContext()
+  const { isLoggedIn, username } = useFanAuth()
   const { showToast } = useToast()
+  const navigate = useNavigate()
 
   async function handleImageSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -36,10 +39,12 @@ export function MessageForm() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    const trimmedNick = nickname.trim()
+    if (!isLoggedIn) {
+      navigate('/login')
+      return
+    }
     const trimmedContent = content.trim()
 
-    if (!trimmedNick) { showToast('请输入昵称', 'warning'); return }
     if (!trimmedContent) { showToast('请输入留言内容', 'warning'); return }
     if (trimmedContent.length > MAX_MESSAGE_LENGTH) {
       showToast(`留言内容不能超过${MAX_MESSAGE_LENGTH}字`, 'warning')
@@ -49,12 +54,11 @@ export function MessageForm() {
     setSubmitting(true)
     try {
       await addMessage({
-        nickname: trimmedNick,
+        nickname: username || '匿名粉丝',
         content: trimmedContent,
         imageUrl: image ?? undefined,
       })
       showToast('应援发送成功！')
-      setNickname('')
       setContent('')
       setImage(null)
     } catch {
@@ -64,30 +68,70 @@ export function MessageForm() {
     }
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="rounded-lg bg-[#111]/80 backdrop-blur-sm border border-white/[0.05] p-4">
-      <div className="flex gap-3">
-        <input
-          type="text"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value.slice(0, MAX_NICKNAME_LENGTH))}
-          placeholder="你的昵称"
-          maxLength={MAX_NICKNAME_LENGTH}
-          className="w-28 flex-shrink-0 rounded-md bg-gradient-to-b from-[#1e1e1e] to-[#111] px-3 py-2 text-body-sm text-text-primary placeholder-text-tertiary outline-none focus:ring-1 focus:ring-primary/50 transition-all"
-        />
-        <div className="flex-1 relative">
+  // Not logged in state
+  if (!isLoggedIn) {
+    return (
+      <div className="rounded-lg bg-[#111]/80 backdrop-blur-sm border border-white/[0.05] p-4">
+        <div className="flex flex-col items-center" style={{ gap: 12 }}>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value.slice(0, MAX_MESSAGE_LENGTH))}
-            placeholder="写下你的应援...（最多500字）"
+            placeholder="登录后发送留言，为 EDG 加油..."
             maxLength={MAX_MESSAGE_LENGTH}
             rows={3}
             className="w-full resize-none rounded-md bg-gradient-to-b from-[#1e1e1e] to-[#111] px-3 py-2 text-body-sm text-text-primary placeholder-text-tertiary outline-none focus:ring-1 focus:ring-primary/50 transition-all"
           />
-          <span className="absolute bottom-2 right-2 text-caption text-text-tertiary">
-            {content.length}/{MAX_MESSAGE_LENGTH}
-          </span>
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="w-full rounded-lg bg-gradient-to-r from-primary to-primary-hover
+              py-3 text-body font-bold text-white shadow-[0_0_15px_rgba(225,6,0,0.25)]
+              hover:shadow-[0_0_25px_rgba(225,6,0,0.4)] transition-all duration-200
+              active:scale-[0.98] flex items-center justify-center gap-2"
+          >
+            <LogIn className="h-4 w-4" />
+            请先登录
+          </button>
         </div>
+      </div>
+    )
+  }
+
+  // Logged in state
+  return (
+    <form onSubmit={handleSubmit} className="rounded-lg bg-[#111]/80 backdrop-blur-sm border border-white/[0.05] p-4">
+      {/* Username display */}
+      <div className="mb-3 flex items-center" style={{ gap: 8 }}>
+        <span
+          style={{
+            fontSize: 12, fontWeight: 500, color: '#E11D48',
+            fontFamily: 'Inter, sans-serif', letterSpacing: 0.5,
+          }}
+        >
+          已登录：
+        </span>
+        <span
+          style={{
+            fontSize: 13, fontWeight: 600, color: '#F8FAFC',
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          {username}
+        </span>
+      </div>
+
+      <div className="flex-1 relative">
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value.slice(0, MAX_MESSAGE_LENGTH))}
+          placeholder={`为 EDG 加油，${username}...`}
+          maxLength={MAX_MESSAGE_LENGTH}
+          rows={3}
+          className="w-full resize-none rounded-md bg-gradient-to-b from-[#1e1e1e] to-[#111] px-3 py-2 text-body-sm text-text-primary placeholder-text-tertiary outline-none focus:ring-1 focus:ring-primary/50 transition-all"
+        />
+        <span className="absolute bottom-2 right-2 text-caption text-text-tertiary">
+          {content.length}/{MAX_MESSAGE_LENGTH}
+        </span>
       </div>
 
       {/* Image preview */}
@@ -108,7 +152,7 @@ export function MessageForm() {
         </div>
       )}
 
-      {/* Emoji 快捷选择 */}
+      {/* Emoji quick select */}
       <div className="mt-3 flex items-center gap-1.5">
         {['🔥', '💪', '⚡', '🏆', '❤️'].map((emoji) => (
           <button
