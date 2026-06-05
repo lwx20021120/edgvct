@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <rect width="1200" height="630" fill="#0A0A0A"/>
+  <rect x="100" y="200" width="1000" height="230" rx="20" fill="#141414" stroke="#E10600" stroke-width="3"/>
+  <text x="600" y="340" text-anchor="middle" fill="#E10600" font-size="72" font-family="sans-serif" font-weight="800">EDG · VCT LONDON</text>
+  <text x="600" y="400" text-anchor="middle" fill="#F5F5F5" font-size="32" font-family="sans-serif">爱德华 Gaming 无畏契约伦敦大师赛应援站</text>
+</svg>
