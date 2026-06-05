@@ -929,7 +929,7 @@ function MessageToPlayersSection() {
             lineHeight: '1.7', maxWidth: 700,
           }}
         >
-          致 EDG 的每一位战士——从伊斯坦布尔到伦敦，四年的冠军之路
+          致 EDG 的每一位战士——从伊斯坦布尔到伦敦，四年赛场征战
         </p>
       </div>
 
