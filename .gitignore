@@ -2,10 +2,18 @@ node_modules/
 dist/
 .env
 *.local
+.tsbuildinfo
 .DS_Store
 
+# Claude Code session artifacts
+.claude/
+.workbuddy/
+
+# Design files (reference only, too large for repo)
+degsin/
+设计.txt
+
 # Tencent Cloud EdgeOne
-.env
 .edgeone/*
 .tef_dist/*
   
