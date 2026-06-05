@@ -806,19 +806,19 @@ function FanWallSection() {
       {/* Two scrolling rows — each message randomly assigned to one row */}
       {messages.length > 0 ? (
         <div className="w-full overflow-hidden" style={{ maxWidth: 1240 }}>
-          {/* Row 1 — scroll left */}
+          {/* Row 1 — scroll left (seamless loop with 2× copy) */}
           <div className="relative" style={{ padding: '14px 0' }}>
             <motion.div
               className="flex"
               style={{ gap: 24 }}
-              animate={{ x: ['0%', '-100%'] }}
+              animate={{ x: ['0%', '-50%'] }}
               transition={{
-                x: { repeat: Infinity, duration: Math.max(row1.length * 8, 16), ease: 'linear' },
+                x: { repeat: Infinity, duration: Math.max(row1.length * 5, 10), ease: 'linear' },
               }}
             >
-              {row1.map((msg) => (
+              {[...row1, ...row1].map((msg, i) => (
                 <div
-                  key={msg.id}
+                  key={`${msg.id}-${i}`}
                   className="flex-shrink-0 flex flex-col"
                   style={{
                     width: 400, padding: 24, gap: 10,
@@ -836,19 +836,19 @@ function FanWallSection() {
               ))}
             </motion.div>
           </div>
-          {/* Row 2 — scroll right */}
+          {/* Row 2 — scroll right (seamless loop with 2× copy) */}
           <div className="relative" style={{ padding: '14px 0' }}>
             <motion.div
               className="flex"
               style={{ gap: 24 }}
-              animate={{ x: ['0%', '100%'] }}
+              animate={{ x: ['-50%', '0%'] }}
               transition={{
-                x: { repeat: Infinity, duration: Math.max(row2.length * 8, 16), ease: 'linear' },
+                x: { repeat: Infinity, duration: Math.max(row2.length * 5, 10), ease: 'linear' },
               }}
             >
-              {row2.map((msg) => (
+              {[...row2, ...row2].map((msg, i) => (
                 <div
-                  key={msg.id}
+                  key={`${msg.id}-${i}`}
                   className="flex-shrink-0 flex flex-col"
                   style={{
                     width: 400, padding: 24, gap: 10,
