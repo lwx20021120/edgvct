@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, Upload, Send, User, Loader2, X } from 'lucide-react'
@@ -744,6 +744,17 @@ function FanWallSection() {
     }
   }
 
+  // Randomly assign each message to row 1 or row 2 (stable by id hash)
+  const { row1, row2 } = useMemo(() => {
+    const r1: typeof messages = []
+    const r2: typeof messages = []
+    messages.forEach((m) => {
+      const hash = m.id.split('').reduce((a, c) => a + c.charCodeAt(0), 0)
+      ;(hash % 2 === 0 ? r1 : r2).push(m)
+    })
+    return { row1: r1, row2: r2 }
+  }, [messages])
+
   return (
     <section
       id="应援墙"
@@ -795,28 +806,25 @@ function FanWallSection() {
         </button>
       </div>
 
-      {/* Scrolling message row */}
+      {/* Two scrolling rows — each message randomly assigned to one row */}
       {messages.length > 0 ? (
         <div className="w-full overflow-hidden" style={{ maxWidth: 1240 }}>
-          <div className="relative" style={{ padding: '16px 0' }}>
+          {/* Row 1 — scroll left */}
+          <div className="relative" style={{ padding: '12px 0' }}>
             <motion.div
               className="flex"
               style={{ gap: 20 }}
               animate={{ x: ['0%', '-100%'] }}
               transition={{
-                x: {
-                  repeat: Infinity,
-                  duration: Math.max(messages.length * 4, 12),
-                  ease: 'linear',
-                },
+                x: { repeat: Infinity, duration: Math.max(row1.length * 4, 12), ease: 'linear' },
               }}
             >
-              {messages.slice(0, 30).map((msg) => (
+              {row1.map((msg) => (
                 <div
                   key={msg.id}
                   className="flex-shrink-0 flex flex-col"
                   style={{
-                    width: 360, padding: 20, gap: 10,
+                    width: 340, padding: 18, gap: 8,
                     backgroundColor: T.bgCard,
                     border: `1px solid ${T.border}33`,
                   }}
@@ -824,12 +832,37 @@ function FanWallSection() {
                   <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
                     {msg.nickname}
                   </span>
-                  <span
-                    style={{
-                      fontSize: 15, fontWeight: 400, color: T.text,
-                      fontFamily: 'Inter, sans-serif', lineHeight: '22px',
-                    }}
-                  >
+                  <span style={{ fontSize: 15, fontWeight: 400, color: T.text, fontFamily: 'Inter, sans-serif', lineHeight: '22px' }}>
+                    {msg.content}
+                  </span>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+          {/* Row 2 — scroll right */}
+          <div className="relative" style={{ padding: '12px 0' }}>
+            <motion.div
+              className="flex"
+              style={{ gap: 20 }}
+              animate={{ x: ['-100%', '0%'] }}
+              transition={{
+                x: { repeat: Infinity, duration: Math.max(row2.length * 4, 12), ease: 'linear' },
+              }}
+            >
+              {row2.map((msg) => (
+                <div
+                  key={msg.id}
+                  className="flex-shrink-0 flex flex-col"
+                  style={{
+                    width: 340, padding: 18, gap: 8,
+                    backgroundColor: T.bgCard,
+                    border: `1px solid ${T.border}33`,
+                  }}
+                >
+                  <span style={{ fontSize: 14, fontWeight: 600, color: T.accent, fontFamily: 'Inter, sans-serif' }}>
+                    {msg.nickname}
+                  </span>
+                  <span style={{ fontSize: 15, fontWeight: 400, color: T.text, fontFamily: 'Inter, sans-serif', lineHeight: '22px' }}>
                     {msg.content}
                   </span>
                 </div>
